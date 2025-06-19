@@ -163,7 +163,7 @@ export default function LoginPage() {
     }
   };
 
-  const handleGoogleError = (error: any) => {
+  const handleGoogleError = (error: unknown) => {
     console.error("Google login error:", error);
     showToast("Google login failed. Please try again.", "error");
   };
