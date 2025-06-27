@@ -13,7 +13,7 @@ import ClientProfilePage from "../pages/ClientProfilePage";
 import FreelancerProfilePage from "../pages/FreelancerProfilePage";
 import BlogPostPage from "../pages/BlogPost/BlogPostPage";
 import BlogPostDetail from "../pages/BlogPost/BlogPostDetail";
-
+import CreateJobPost from "../pages/CreateJobPost";
 export default function AppRouter() {
   return (
     <BrowserRouter>
@@ -30,6 +30,7 @@ export default function AppRouter() {
         <Route path="/freelancer/:userId" element={<MainLayout><FreelancerProfilePage /></MainLayout>} />
         <Route path="/blogposts" element={<MainLayout><BlogPostPage/></MainLayout>} />
         <Route path="/blog/:id" element={<MainLayout><BlogPostDetail/></MainLayout>} />
+        <Route path="/create-job-post" element={<MainLayout><CreateJobPost/></MainLayout>} />
       </Routes>
     </BrowserRouter>
   );
