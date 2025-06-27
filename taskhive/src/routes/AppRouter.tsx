@@ -8,6 +8,11 @@ import AuthLayout from "../layouts/AuthLayout";
 import EmailVerificationPage from '../pages/EmailVerificationPage';
 import RequestPasswordResetPage from '../pages/RequestPasswordResetPage';
 import ResetPasswordPage from '../pages/ResetPasswordPage';
+import ProfilePage from "../pages/ProfilePage";
+import ClientProfilePage from "../pages/ClientProfilePage";
+import FreelancerProfilePage from "../pages/FreelancerProfilePage";
+import BlogPostPage from "../pages/BlogPost/BlogPostPage";
+import BlogPostDetail from "../pages/BlogPost/BlogPostDetail";
 
 export default function AppRouter() {
   return (
@@ -20,6 +25,11 @@ export default function AppRouter() {
         <Route path="/verify-email" element={<EmailVerificationPage />} />
         <Route path="/forgot-password" element={<RequestPasswordResetPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/profile" element={<MainLayout><ProfilePage /></MainLayout>} />
+        <Route path="/client/:userId" element={<MainLayout><ClientProfilePage /></MainLayout>} />
+        <Route path="/freelancer/:userId" element={<MainLayout><FreelancerProfilePage /></MainLayout>} />
+        <Route path="/blogposts" element={<MainLayout><BlogPostPage/></MainLayout>} />
+        <Route path="/blog/:id" element={<MainLayout><BlogPostDetail/></MainLayout>} />
       </Routes>
     </BrowserRouter>
   );
