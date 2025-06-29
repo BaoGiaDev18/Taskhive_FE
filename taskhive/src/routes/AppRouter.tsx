@@ -5,32 +5,114 @@ import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/RegisterPage";
 import MainLayout from "../layouts/MainLayout";
 import AuthLayout from "../layouts/AuthLayout";
-import EmailVerificationPage from '../pages/EmailVerificationPage';
-import RequestPasswordResetPage from '../pages/RequestPasswordResetPage';
-import ResetPasswordPage from '../pages/ResetPasswordPage';
+import EmailVerificationPage from "../pages/EmailVerificationPage";
+import RequestPasswordResetPage from "../pages/RequestPasswordResetPage";
+import ResetPasswordPage from "../pages/ResetPasswordPage";
 import ProfilePage from "../pages/ProfilePage";
 import ClientProfilePage from "../pages/ClientProfilePage";
 import FreelancerProfilePage from "../pages/FreelancerProfilePage";
 import BlogPostPage from "../pages/BlogPost/BlogPostPage";
 import BlogPostDetail from "../pages/BlogPost/BlogPostDetail";
 import CreateJobPost from "../pages/CreateJobPost";
+import FindWorkPage from "../pages/FindWorkPage";
+import ChatTest from "../components/ChatTest";
+
 export default function AppRouter() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<MainLayout><HomePage /></MainLayout>} />
-        <Route path="/hirefreelancer" element={<MainLayout><HireFreelancerPage /></MainLayout>} />
-        <Route path="/login" element={<AuthLayout><LoginPage /></AuthLayout>} />
-        <Route path="/register" element={<AuthLayout><RegisterPage /></AuthLayout>} />
+        <Route
+          path="/"
+          element={
+            <MainLayout>
+              <HomePage />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/hirefreelancer"
+          element={
+            <MainLayout>
+              <HireFreelancerPage />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/login"
+          element={
+            <AuthLayout>
+              <LoginPage />
+            </AuthLayout>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <AuthLayout>
+              <RegisterPage />
+            </AuthLayout>
+          }
+        />
         <Route path="/verify-email" element={<EmailVerificationPage />} />
         <Route path="/forgot-password" element={<RequestPasswordResetPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
-        <Route path="/profile" element={<MainLayout><ProfilePage /></MainLayout>} />
-        <Route path="/client/:userId" element={<MainLayout><ClientProfilePage /></MainLayout>} />
-        <Route path="/freelancer/:userId" element={<MainLayout><FreelancerProfilePage /></MainLayout>} />
-        <Route path="/blogposts" element={<MainLayout><BlogPostPage/></MainLayout>} />
-        <Route path="/blog/:id" element={<MainLayout><BlogPostDetail/></MainLayout>} />
-        <Route path="/create-job-post" element={<MainLayout><CreateJobPost/></MainLayout>} />
+        <Route
+          path="/profile"
+          element={
+            <MainLayout>
+              <ProfilePage />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/client/:userId"
+          element={
+            <MainLayout>
+              <ClientProfilePage />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/freelancer/:userId"
+          element={
+            <MainLayout>
+              <FreelancerProfilePage />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/blogposts"
+          element={
+            <MainLayout>
+              <BlogPostPage />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/blog/:id"
+          element={
+            <MainLayout>
+              <BlogPostDetail />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/create-job-post"
+          element={
+            <MainLayout>
+              <CreateJobPost />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/find-work"
+          element={
+            <MainLayout>
+              <FindWorkPage />
+            </MainLayout>
+          }
+        />
+        <Route path="/chat-test" element={<ChatTest />} />
       </Routes>
     </BrowserRouter>
   );
