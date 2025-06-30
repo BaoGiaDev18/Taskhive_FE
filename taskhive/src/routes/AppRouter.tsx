@@ -16,6 +16,8 @@ import BlogPostDetail from "../pages/BlogPost/BlogPostDetail";
 import CreateJobPost from "../pages/CreateJobPost";
 import FindWorkPage from "../pages/FindWorkPage";
 import ChatTest from "../components/ChatTest";
+import MembershipPlansPage from "../pages/MembershipPage";
+import WhyTaskhivePage from "../pages/WhyTaskhivePage";
 
 export default function AppRouter() {
   return (
@@ -113,6 +115,22 @@ export default function AppRouter() {
           }
         />
         <Route path="/chat-test" element={<ChatTest />} />
+        <Route
+          path="/membership"
+          element={
+            <MainLayout>
+              <MembershipPlansPage />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/about"
+          element={
+            <MainLayout>
+              <WhyTaskhivePage />
+            </MainLayout>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

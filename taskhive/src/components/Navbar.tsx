@@ -62,7 +62,7 @@ export default function Navbar() {
   const handleLogout = async () => {
     try {
       await api.post("/api/User/logout");
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       // Ignore error, proceed with logout
     }
@@ -104,6 +104,12 @@ export default function Navbar() {
         >
           Why TaskHive
         </Link>
+        <Link
+          to="/blogposts"
+          className="text-white hover:text-yellow-400 transition-colors"
+        >
+          Blogs
+        </Link>
       </div>
 
       {/* User Profile or Auth Links */}
@@ -113,30 +119,34 @@ export default function Navbar() {
           return (
             <div className="flex items-center space-x-6 text-lg">
               {/* Language Button */}
-                <button className="text-white hover:text-yellow-400 transition-colors">
+              <button className="text-white hover:text-yellow-400 transition-colors">
                 EN
-                </button>
+              </button>
 
-                {/* Profile Dropdown */}
-                <div className="relative" ref={dropdownRef}>
+              {/* Profile Dropdown */}
+              <div className="relative" ref={dropdownRef}>
                 <button
                   onClick={() => setShowDropdown(!showDropdown)}
                   className="w-12 h-12 rounded-full overflow-hidden border-2 border-yellow-400 hover:border-yellow-300 transition-colors focus:outline-none focus:ring-2 focus:ring-yellow-400 focus:ring-offset-2 focus:ring-offset-gray-900 p-0"
                   style={{ padding: 0 }}
                 >
                   {user.imageUrl ? (
-                  <img
-                    src={user.imageUrl}
-                    alt={user.fullName}
-                    className="w-full h-full object-cover object-center"
-                    style={{ width: "100%", height: "100%", display: "block" }}
-                  />
+                    <img
+                      src={user.imageUrl}
+                      alt={user.fullName}
+                      className="w-full h-full object-cover object-center"
+                      style={{
+                        width: "100%",
+                        height: "100%",
+                        display: "block",
+                      }}
+                    />
                   ) : (
-                  <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center">
-                    <span className="text-gray-900 text-lg font-bold">
-                    {getInitials(user.fullName)}
-                    </span>
-                  </div>
+                    <div className="w-full h-full bg-gradient-to-br from-yellow-400 to-yellow-600 flex items-center justify-center">
+                      <span className="text-gray-900 text-lg font-bold">
+                        {getInitials(user.fullName)}
+                      </span>
+                    </div>
                   )}
                 </button>
 
@@ -202,7 +212,6 @@ export default function Navbar() {
                         View Profile
                       </Link>
 
-
                       {user.role === "Client" && (
                         <Link
                           to="/my-projects"
@@ -249,6 +258,26 @@ export default function Navbar() {
                             My Proposals
                           </Link>
                           <Link
+                            to="/membership"
+                            className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+                            onClick={() => setShowDropdown(false)}
+                          >
+                            <svg
+                              className="w-4 h-4 mr-3 text-gray-400"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                              />
+                            </svg>
+                            Memmbership Plan
+                          </Link>
+                          <Link
                             to="/my-contracts"
                             className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
                             onClick={() => setShowDropdown(false)}
@@ -270,15 +299,14 @@ export default function Navbar() {
                           </Link>
                         </>
                       )}
-
                     </div>
 
                     {/* Logout */}
                     <div className="border-t border-gray-100 pt-1">
-                        <button
+                      <button
                         onClick={handleLogout}
                         className="flex items-center w-full px-4 py-2 text-sm text-yellow-600 hover:bg-yellow-100 transition-colors bg-white"
-                        >
+                      >
                         <svg
                           className="w-4 h-4 mr-3 text-yellow-500"
                           fill="none"
@@ -286,14 +314,14 @@ export default function Navbar() {
                           viewBox="0 0 24 24"
                         >
                           <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth="2"
-                          d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
                           />
                         </svg>
                         Sign Out
-                        </button>
+                      </button>
                     </div>
                   </div>
                 )}
