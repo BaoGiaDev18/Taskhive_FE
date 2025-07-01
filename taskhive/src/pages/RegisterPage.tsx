@@ -500,12 +500,66 @@ export default function RegisterPage() {
     }
   };
 
-  const handleGoogleError = (error: any) => {
-    console.error("Google registration error:", error);
-    showToast("Google registration failed. Please try again.", "error");
+  // Handle Google login (same as LoginPage) - for role selection step
+  const handleGoogleLogin = async (credential: string) => {
+    setLoading(true);
+    try {
+      const response = await api.post("/api/User/google-login", {
+        idToken: credential,
+      });
+
+      // Handle Google login response - same as LoginPage
+      const { accessToken, refreshToken, expiresAt, message } = response.data;
+
+      // Store tokens in localStorage
+      localStorage.setItem("jwtToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+      localStorage.setItem("tokenExpiresAt", expiresAt);
+
+      showToast(
+        message || "Google login successful! Redirecting...",
+        "success"
+      );
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 1500);
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err) && err.response) {
+        const apiMessage = (err.response.data as { message?: string }).message;
+
+        // Check if user needs to register with Google
+        if (apiMessage === "GOOGLE_REGISTER_REQUIRED") {
+          // Store Google token for registration process
+          sessionStorage.setItem("googleIdToken", credential);
+          showToast("Please complete your registration", "info");
+          setTimeout(() => {
+            navigate("/register?googleRegister=true");
+          }, 1000);
+          return;
+        }
+
+        showToast(
+          apiMessage || "Google login failed. Please try again.",
+          "error"
+        );
+      } else {
+        showToast(
+          "Network error. Please check your connection and try again.",
+          "error"
+        );
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Handle regular Google register button click
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleGoogleError = (error: any) => {
+    console.error("Google login/register error:", error);
+    showToast("Google authentication failed. Please try again.", "error");
+  };
+
+  // Handle regular Google register button click (for form step)
   const handleRegularGoogleRegister = async (credential: string) => {
     // Store Google token for the flow
     sessionStorage.setItem("googleIdToken", credential);
@@ -592,7 +646,7 @@ export default function RegisterPage() {
             </div>
           </div>
 
-          {/* Google Register Option - Only show for regular flow */}
+          {/* Google Login/Register Option - Only show for regular flow */}
           {!isGoogleRegister && (
             <div className="mt-16 max-w-md mx-auto">
               <div className="relative mb-6">
@@ -601,13 +655,13 @@ export default function RegisterPage() {
                 </div>
                 <div className="relative flex justify-center text-sm">
                   <span className="px-2 bg-white text-gray-500">
-                    or register with
+                    or continue with Google
                   </span>
                 </div>
               </div>
 
               <GoogleLoginButton
-                onSuccess={handleRegularGoogleRegister}
+                onSuccess={handleGoogleLogin}
                 onError={handleGoogleError}
                 disabled={loading}
               />
@@ -630,6 +684,7 @@ export default function RegisterPage() {
     );
   }
 
+  // Form JSX remains the same with handleRegularGoogleRegister for form step
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
       <Toast

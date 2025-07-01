@@ -103,13 +103,6 @@ const BlogPostDetail: React.FC = () => {
     });
   };
 
-  const handleAuthorClick = () => {
-    if (blogPost?.author) {
-      // Assuming we have routes for user profiles
-      navigate(`/profile/${blogPost.author.userId}`);
-    }
-  };
-
   const handleShare = async () => {
     if (navigator.share && blogPost) {
       try {
@@ -285,10 +278,7 @@ const BlogPostDetail: React.FC = () => {
 
           {/* Author & Actions */}
           <div className="flex items-center justify-between">
-            <div
-              onClick={handleAuthorClick}
-              className="flex items-center gap-4 cursor-pointer hover:bg-gray-50 rounded-xl p-3 -m-3 transition-colors"
-            >
+            <div className="flex items-center gap-4 cursor-pointer hover:bg-gray-50 rounded-xl p-3 -m-3 transition-colors">
               <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#F57C00] to-[#FFA726] flex items-center justify-center">
                 <span className="text-white font-bold">
                   {getInitials(blogPost.author.fullName)}
