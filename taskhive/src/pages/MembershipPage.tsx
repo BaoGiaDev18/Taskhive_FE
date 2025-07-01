@@ -34,20 +34,10 @@ const MembershipPlansPage: React.FC = () => {
       return;
     }
 
+    localStorage.setItem("paymentUserId", userId.toString());
     setLoadingPayment(true);
 
     try {
-      // 1. Gửi thông tin đơn hàng
-      await api.post("/api/Payment/membership", {
-        userId: userId,
-        amount: selectedPlan.price,
-        paymentDate: new Date().toISOString(),
-        paymentType: "Membership",
-        membershipId: selectedPlan.membershipId,
-        status: "Pending",
-      });
-
-      // 2. Gọi API tạo link thanh toán
       const res = await api.post("/api/Payment/create-link", {
         amount: selectedPlan.price,
         description: `Upgrade to ${selectedPlan.name}`,
@@ -59,7 +49,7 @@ const MembershipPlansPage: React.FC = () => {
           },
         ],
         cancelUrl: window.location.href,
-        returnUrl: window.location.href,
+        returnUrl: `${window.location.origin}/membership/confirm?membershipId=${selectedPlan.membershipId}&price=${selectedPlan.price}`,
       });
 
       const checkoutUrl = res.data.checkoutUrl;

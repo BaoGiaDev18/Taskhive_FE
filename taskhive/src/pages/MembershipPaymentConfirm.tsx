@@ -1,0 +1,98 @@
+import { useEffect, useRef, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import api from "../services/api";
+import { AxiosError } from "axios";
+import Toast from "../components/Toast"; // đảm bảo đường dẫn đúng
+
+interface ErrorResponse {
+  title?: string;
+  message?: string;
+}
+
+const MembershipPaymentConfirm = () => {
+  const { search } = useLocation();
+  const navigate = useNavigate();
+  const hasConfirmedRef = useRef(false);
+
+  const [toast, setToast] = useState<{
+    message: string;
+    type: "success" | "error" | "info";
+    isVisible: boolean;
+  }>({
+    message: "",
+    type: "info",
+    isVisible: false,
+  });
+
+  const showToast = (message: string, type: "success" | "error" | "info") => {
+    setToast({ message, type, isVisible: true });
+  };
+
+  const hideToast = () => {
+    setToast((prev) => ({ ...prev, isVisible: false }));
+  };
+
+  useEffect(() => {
+    const confirmPayment = async () => {
+      if (hasConfirmedRef.current) return;
+      hasConfirmedRef.current = true;
+
+      const params = new URLSearchParams(search);
+      const membershipId = parseInt(params.get("membershipId") || "");
+      const amount = parseFloat(params.get("price") || "");
+      const userId = parseInt(localStorage.getItem("paymentUserId") || "");
+
+      console.log("Confirming payment with:", { userId, membershipId, amount });
+
+      if (!membershipId || !amount || !userId) {
+        showToast("Missing info", "error");
+        setTimeout(() => navigate("/membership"), 1500);
+        return;
+      }
+
+      try {
+        await api.post("/api/Payment/membership", {
+          userId,
+          amount,
+          paymentDate: new Date().toISOString(),
+          paymentType: 0,
+          membershipId,
+          status: 1,
+        });
+
+        showToast("Payment successful! Membership upgraded.", "success");
+      } catch (err: unknown) {
+        const axiosErr = err as AxiosError<ErrorResponse>;
+        const msg =
+          axiosErr.response?.data?.title ||
+          axiosErr.response?.data?.message ||
+          axiosErr.message ||
+          "Unknown error";
+        console.error("Payment confirm failed:", msg);
+        showToast("Error confirming your payment: " + msg, "error");
+      } finally {
+        localStorage.removeItem("paymentUserId");
+        setTimeout(() => navigate("/membership"), 3000); // chờ Toast hiện xong rồi chuyển trang
+      }
+    };
+
+    confirmPayment();
+  }, [search]);
+
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <p className="text-gray-700 text-lg font-semibold">
+        Confirming your membership payment...
+      </p>
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        isVisible={toast.isVisible}
+        onClose={hideToast}
+        duration={3000}
+      />
+    </div>
+  );
+};
+
+export default MembershipPaymentConfirm;

@@ -18,9 +18,12 @@ import FindWorkPage from "../pages/FindWorkPage";
 import ChatTest from "../components/ChatTest";
 import MembershipPlansPage from "../pages/MembershipPage";
 import WhyTaskhivePage from "../pages/WhyTaskhivePage";
-import JobPostDetail from "../pages/JobDetailPage"; 
+import JobPostDetail from "../pages/JobDetailPage";
 import MyJobPostsPage from "../pages/MyJobPostsPage";
 import ClientJobDetailPage from "../pages/ClientJobDetailPage";
+import MembershipPaymentConfirm from "../pages/MembershipPaymentConfirm";
+import BuySlotsPage from "../pages/BuySlotsPage";
+import SlotPaymentConfirm from "../pages/SlotPaymentConfirm.tsx";
 
 export default function AppRouter() {
   return (
@@ -166,6 +169,19 @@ export default function AppRouter() {
             </MainLayout>
           }
         />
+        <Route
+          path="/membership/confirm"
+          element={<MembershipPaymentConfirm />}
+        />
+        <Route
+          path="/buy-slots"
+          element={
+            <MainLayout>
+              <BuySlotsPage />
+            </MainLayout>
+          }
+        />
+        <Route path="/buy-slots/confirm" element={<SlotPaymentConfirm />} />
       </Routes>
     </BrowserRouter>
   );
