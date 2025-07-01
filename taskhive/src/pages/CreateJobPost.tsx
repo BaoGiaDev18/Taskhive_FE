@@ -53,7 +53,7 @@ const CreateJobPost: React.FC = () => {
     salaryMin: 0,
     salaryMax: 0,
     jobType: "",
-    status: "Approved",
+    status: "Open",
     deadline: "",
   });
 
@@ -252,7 +252,7 @@ const CreateJobPost: React.FC = () => {
       showToast("Job post created successfully!", "success");
 
       setTimeout(() => {
-        navigate("/jobs");
+        navigate("/my-job-posts");
       }, 2000);
     } catch (error: any) {
       console.error("Failed to create job post:", error);

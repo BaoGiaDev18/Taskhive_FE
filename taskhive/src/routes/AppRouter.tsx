@@ -18,6 +18,9 @@ import FindWorkPage from "../pages/FindWorkPage";
 import ChatTest from "../components/ChatTest";
 import MembershipPlansPage from "../pages/MembershipPage";
 import WhyTaskhivePage from "../pages/WhyTaskhivePage";
+import JobPostDetail from "../pages/JobDetailPage"; 
+import MyJobPostsPage from "../pages/MyJobPostsPage";
+import ClientJobDetailPage from "../pages/ClientJobDetailPage";
 
 export default function AppRouter() {
   return (
@@ -111,6 +114,38 @@ export default function AppRouter() {
           element={
             <MainLayout>
               <FindWorkPage />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/find-work"
+          element={
+            <MainLayout>
+              <FindWorkPage />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/job/:jobId"
+          element={
+            <MainLayout>
+              <JobPostDetail />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/my-job-posts"
+          element={
+            <MainLayout>
+              <MyJobPostsPage />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/my-job-posts/:jobId"
+          element={
+            <MainLayout>
+              <ClientJobDetailPage />
             </MainLayout>
           }
         />
