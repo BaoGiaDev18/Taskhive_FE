@@ -24,6 +24,7 @@ import ClientJobDetailPage from "../pages/ClientJobDetailPage";
 import MembershipPaymentConfirm from "../pages/MembershipPaymentConfirm";
 import BuySlotsPage from "../pages/BuySlotsPage";
 import SlotPaymentConfirm from "../pages/SlotPaymentConfirm.tsx";
+import ApplyFormPage from "../pages/ApplyFormPage";
 
 export default function AppRouter() {
   return (
@@ -182,6 +183,14 @@ export default function AppRouter() {
           }
         />
         <Route path="/buy-slots/confirm" element={<SlotPaymentConfirm />} />
+        <Route
+          path="/apply"
+          element={
+            <MainLayout>
+              <ApplyFormPage />
+            </MainLayout>
+          }
+        />
       </Routes>
     </BrowserRouter>
   );

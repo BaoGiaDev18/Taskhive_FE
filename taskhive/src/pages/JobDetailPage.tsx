@@ -176,14 +176,16 @@ const JobDetailPage = () => {
     if (!isAuthenticated) {
       navigate("/login");
     } else {
-      // Handle apply logic here
-      alert("Application submitted successfully!");
-    }
-  };
-
-  const handleClientProfile = () => {
-    if (job) {
-      navigate(`/client/${job.employerId}`);
+      navigate("/apply", {
+        state: {
+          jobPostId: job?.jobPostId,
+          jobTitle: job?.title,
+          salaryMin: job?.salaryMin,
+          salaryMax: job?.salaryMax,
+          jobType: job?.jobType,
+          deadline: job?.deadline,
+        },
+      });
     }
   };
 
@@ -491,7 +493,7 @@ const JobDetailPage = () => {
         </div>
       </div>
 
-        <Footer />
+      <Footer />
     </div>
   );
 };
