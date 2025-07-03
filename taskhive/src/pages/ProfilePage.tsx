@@ -405,17 +405,17 @@ const ProfilePage: React.FC = () => {
 
   // Handle remove skill (placeholder for future API)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleRemoveSkill = (categoryId: number) => {
-    showToast("Remove skill functionality will be implemented soon", "info");
-    // TODO: Implement API call to remove skill
-  };
+  // const handleRemoveSkill = (categoryId: number) => {
+  //   showToast("Remove skill functionality will be implemented soon", "info");
+  //   // TODO: Implement API call to remove skill
+  // };
 
   // Handle add skill (placeholder for future API)
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleAddSkill = (categoryId: number) => {
-    showToast("Add skill functionality will be implemented soon", "info");
-    // TODO: Implement API call to add skill
-  };
+  // const handleAddSkill = (categoryId: number) => {
+  //   showToast("Add skill functionality will be implemented soon", "info");
+  //   // TODO: Implement API call to add skill
+  // };
 
   // Fetch reviews
   const fetchMyReviews = async () => {
@@ -1054,9 +1054,9 @@ const ProfilePage: React.FC = () => {
                           {getAvailableCategories().map((category) => (
                             <button
                               key={category.categoryId}
-                              onClick={() =>
-                                handleAddSkill(category.categoryId)
-                              }
+                              // onClick={() =>
+                              //   handleAddSkill(category.categoryId)
+                              // }
                               className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-gray-100 text-gray-500 hover:bg-gray-200 hover:text-gray-700 transition-colors cursor-pointer"
                               title={category.description}
                             >
@@ -1095,9 +1095,9 @@ const ProfilePage: React.FC = () => {
                               >
                                 {skill.categoryName}
                                 <button
-                                  onClick={() =>
-                                    handleRemoveSkill(skill.categoryId)
-                                  }
+                                  // onClick={() =>
+                                  //   handleRemoveSkill(skill.categoryId)
+                                  // }
                                   className="ml-2 w-4 h-4 rounded-full bg-[#F57C00]/20 hover:bg-[#F57C00]/40 flex items-center justify-center transition-colors text-[#F57C00] font-bold text-xs"
                                   title="Remove skill"
                                 >

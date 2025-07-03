@@ -24,8 +24,7 @@ interface JobCardProps {
   onApply?: (jobId: number) => void;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const JobCard: React.FC<JobCardProps> = ({ job, onApply }) => {
+const JobCard: React.FC<JobCardProps> = ({ job }) => {
   const navigate = useNavigate();
 
   const formatSalary = (min: number, max: number) => {
@@ -105,7 +104,7 @@ const JobCard: React.FC<JobCardProps> = ({ job, onApply }) => {
         <span className="text-sm text-gray-600 ml-2">
           <a
             href="#"
-            onClick={e => {
+            onClick={(e) => {
               e.preventDefault();
               handleEmployerClick(e);
             }}

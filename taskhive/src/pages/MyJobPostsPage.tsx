@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 import Footer from "../components/Footer";
@@ -27,8 +27,7 @@ const MyJobPostsPage = () => {
   const [jobPosts, setJobPosts] = useState<JobPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [employerId, setEmployerId] = useState<number>(0);
+  const [, setEmployerId] = useState<number>(0);
 
   // Helper function to decode JWT token (same as CreateJobPost)
   const decodeJWT = (token: string) => {
