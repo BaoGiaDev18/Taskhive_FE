@@ -2,7 +2,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://localhost:7062", // <-- đổi cho đúng với backend
+  baseURL: "https://taskhive-zjch.onrender.com", // <-- đổi cho đúng với backend
   timeout: 5000,
 });
 

@@ -8,12 +8,12 @@ export default defineConfig({
     // https: true,
     proxy: {
       "/api": {
-        target: "https://localhost:7062",
+        target: "https://taskhive-zjch.onrender.com",
         changeOrigin: true,
         secure: false,
       },
       "/hubs": {
-        target: "https://localhost:7062",
+        target: "https://taskhive-zjch.onrender.com",
         ws: true,
         changeOrigin: true,
         secure: false,
