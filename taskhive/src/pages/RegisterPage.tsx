@@ -579,9 +579,13 @@ export default function RegisterPage() {
           onClose={hideToast}
         />
         <div className="w-full max-w-5xl">
-          <div className="absolute top-6 left-6 flex items-center gap-2">
-            <img src={Logo} alt="TaskHive" className="h-10" />
-          </div>
+      <div
+        className="absolute top-4 left-4 flex items-center gap-2 cursor-pointer"
+        onClick={() => (window.location.href = "/")}
+        title="Go to homepage"
+      >
+        <img src={Logo} alt="TaskHive" className="h-8" />
+      </div>
 
           <div className="text-center mb-16">
             <h1 className="text-5xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-[#F57C00] to-[#FFA726]">

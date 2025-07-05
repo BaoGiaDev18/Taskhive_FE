@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
 import BGImage from "../assets/BGhome.jpg";
 import Logo from "../assets/Logo gốc trên nền đen.png";
 import homeimg1 from "../assets/homeimg.jpg";
@@ -8,8 +9,40 @@ import aboutimg2 from "../assets/aboutimg2.jpg";
 import aboutimg3 from "../assets/aboutimg3.jpg";
 import aboutimg4 from "../assets/aboutimg4.jpg";
 import aboutimg5 from "../assets/aboutimg5.jpg";
+import api from "../services/api";
+
+interface UserProfile {
+  fullName: string;
+  imageUrl?: string;
+  role?: string;
+  email?: string;
+}
 
 export default function WhyTaskhivePage() {
+  const [user, setUser] = useState<UserProfile | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const token = localStorage.getItem("jwtToken");
+    if (token) {
+      setIsLoggedIn(true);
+      api
+        .get("/api/User/me")
+        .then((res) => {
+          setUser(res.data);
+        })
+        .catch(() => {
+          setUser(null);
+          setIsLoggedIn(false);
+          localStorage.removeItem("jwtToken");
+          localStorage.removeItem("refreshToken");
+          localStorage.removeItem("tokenExpiresAt");
+        });
+    } else {
+      setIsLoggedIn(false);
+    }
+  }, []);
+
   return (
     <div className=" bg-white">
       <section
@@ -27,9 +60,14 @@ export default function WhyTaskhivePage() {
             business needs. From design to development, find the right talent in
             minutes.
           </p>
-          <button className="bg-gradient-to-r from-orange-500 to-yellow-400 text-black font-bold px-8 py-3 rounded-xl text-xl">
-            Sign up now
-          </button>
+          {!isLoggedIn && (
+            <Link
+              to="/register"
+              className="inline-block bg-gradient-to-r from-orange-500 to-yellow-400 text-black font-bold px-8 py-3 rounded-xl text-xl hover:opacity-90 transition-opacity"
+            >
+              Sign up now
+            </Link>
+          )}
         </div>
       </section>
 
@@ -202,9 +240,39 @@ export default function WhyTaskhivePage() {
               Fast & Secure Payments – Safe transactions, guaranteed
             </li>
           </ul>
-          <button className="bg-yellow-400 hover:bg-yellow-300 text-black font-bold px-8 py-3 rounded-xl text-lg mt-4">
-            Get Started
-          </button>
+          {!isLoggedIn ? (
+            <Link
+              to="/register"
+              className="inline-block bg-yellow-400 hover:bg-yellow-300 text-black font-bold px-8 py-3 rounded-xl text-lg mt-4 transition-colors"
+            >
+              Get Started
+            </Link>
+          ) : (
+            <div className="mt-4">
+              {user?.role === "Freelancer" ? (
+                <Link
+                  to="/find-work"
+                  className="inline-block bg-yellow-400 hover:bg-yellow-300 text-black font-bold px-8 py-3 rounded-xl text-lg transition-colors"
+                >
+                  Find Work
+                </Link>
+              ) : user?.role === "Client" ? (
+                <Link
+                  to="/hirefreelancer"
+                  className="inline-block bg-yellow-400 hover:bg-yellow-300 text-black font-bold px-8 py-3 rounded-xl text-lg transition-colors"
+                >
+                  Hire Freelancer
+                </Link>
+              ) : (
+                <Link
+                  to="/find-work"
+                  className="inline-block bg-yellow-400 hover:bg-yellow-300 text-black font-bold px-8 py-3 rounded-xl text-lg transition-colors"
+                >
+                  Explore Jobs
+                </Link>
+              )}
+            </div>
+          )}
         </div>
       </section>
 

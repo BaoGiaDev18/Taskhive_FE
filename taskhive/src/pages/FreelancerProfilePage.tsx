@@ -96,7 +96,7 @@ const FreelancerProfilePage: React.FC = () => {
     setLoading(true);
     try {
       const response = await api.get(`/api/User/freelancer/${userId}`);
-      setProfile(response.data);
+      setProfile(response.data.profile);
     } catch (error: any) {
       console.error("Failed to fetch freelancer profile:", error);
       if (error.response?.status === 404) {

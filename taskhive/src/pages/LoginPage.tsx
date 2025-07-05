@@ -177,7 +177,11 @@ export default function LoginPage() {
         onClose={hideToast}
       />
 
-      <div className="absolute top-4 left-4 flex items-center gap-2">
+      <div
+        className="absolute top-4 left-4 flex items-center gap-2 cursor-pointer"
+        onClick={() => (window.location.href = "/")}
+        title="Go to homepage"
+      >
         <img src={Logo} alt="TaskHive" className="h-8" />
       </div>
 

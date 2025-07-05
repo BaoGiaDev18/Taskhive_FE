@@ -111,7 +111,7 @@ const JobDetailPage = () => {
     if (!job) return;
     try {
       const response = await api.get(`/api/User/client/${job.employerId}`);
-      setClient(response.data);
+      setClient(response.data.profile);
     } catch (error) {
       console.error("Failed to fetch client info:", error);
     }
@@ -181,6 +181,7 @@ const JobDetailPage = () => {
     }
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const handleClientProfile = () => {
     if (job) {
       navigate(`/client/${job.employerId}`);
