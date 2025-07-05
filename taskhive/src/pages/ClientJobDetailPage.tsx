@@ -82,6 +82,7 @@ interface ApplicationDetailModalProps {
   onClose: () => void;
   onHire: (applicationId: number) => void;
   onDecline: (applicationId: number) => void;
+  onMarkAsReviewed: (applicationId: number) => void; // Add this new prop
 }
 
 const ApplicationDetailModal: React.FC<ApplicationDetailModalProps> = ({
@@ -90,6 +91,7 @@ const ApplicationDetailModal: React.FC<ApplicationDetailModalProps> = ({
   onClose,
   onHire,
   onDecline,
+  onMarkAsReviewed, // Add this prop
 }) => {
   if (!isOpen) return null;
 
@@ -304,7 +306,36 @@ const ApplicationDetailModal: React.FC<ApplicationDetailModalProps> = ({
 
         {/* Actions */}
         <div className="sticky bottom-0 bg-white border-t border-gray-200 p-6 rounded-b-xl">
-          <div className="flex gap-4 justify-end">
+          <div className="flex gap-3 justify-end">
+            {/* Mark as Reviewed Button - Only show for Pending applications */}
+            {application.status === "Pending" && (
+              <button
+                onClick={() => onMarkAsReviewed(application.applicationId)}
+                className="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg transition-colors flex items-center gap-2"
+              >
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                  />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                  />
+                </svg>
+                Mark as Reviewed
+              </button>
+            )}
+
             <button
               onClick={() => onDecline(application.applicationId)}
               className="px-6 py-3 bg-red-500 hover:bg-red-600 text-white font-medium rounded-lg transition-colors"
@@ -318,6 +349,65 @@ const ApplicationDetailModal: React.FC<ApplicationDetailModalProps> = ({
               Hire Freelancer
             </button>
           </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Add new interfaces for confirmation modals
+interface ConfirmationModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  title: string;
+  message: string;
+  confirmText: string;
+  confirmButtonClass: string;
+  isLoading?: boolean;
+}
+
+const ConfirmationModal: React.FC<ConfirmationModalProps> = ({
+  isOpen,
+  onClose,
+  onConfirm,
+  title,
+  message,
+  confirmText,
+  confirmButtonClass,
+  isLoading = false,
+}) => {
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white rounded-xl max-w-md w-full transform transition-all duration-300 ease-out">
+        {/* Header */}
+        <div className="p-6 border-b border-gray-200">
+          <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
+        </div>
+
+        {/* Content */}
+        <div className="p-6">
+          <p className="text-gray-600">{message}</p>
+        </div>
+
+        {/* Actions */}
+        <div className="flex gap-3 p-6 border-t border-gray-200">
+          <button
+            onClick={onClose}
+            disabled={isLoading}
+            className="flex-1 px-4 py-2 text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg font-medium transition-colors disabled:opacity-50"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            disabled={isLoading}
+            className={`flex-1 px-4 py-2 text-white rounded-lg font-medium transition-colors disabled:opacity-50 ${confirmButtonClass}`}
+          >
+            {isLoading ? "Processing..." : confirmText}
+          </button>
         </div>
       </div>
     </div>
@@ -338,6 +428,7 @@ const ClientJobDetailPage = () => {
   const [error, setError] = useState<string>("");
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
   const [activeTab, setActiveTab] = useState<"details" | "applications">(
     "details"
   );
@@ -374,6 +465,10 @@ const ClientJobDetailPage = () => {
     "Freelance",
     "Internship",
   ];
+
+  // Add confirmation modal states
+  const [showCloseConfirm, setShowCloseConfirm] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   useEffect(() => {
     if (jobId) {
@@ -490,47 +585,176 @@ const ClientJobDetailPage = () => {
 
   const handleHire = async (applicationId: number) => {
     try {
-      // Call hire API here
-      console.log("Hiring application:", applicationId);
-      // await api.post(`/api/Application/${applicationId}/hire`);
-
-      // Update application status
-      setApplications((prev) =>
-        prev.map((app) =>
-          app.applicationId === applicationId
-            ? { ...app, status: "Hired" }
-            : app
-        )
+      // Find the current application to get its data
+      const currentApplication = applications.find(
+        (app) => app.applicationId === applicationId
       );
 
+      if (!currentApplication) {
+        showToast("Application not found", "error");
+        return;
+      }
+
+      // 1. Update Application status to "Hired"
+      const applicationFormData = new FormData();
+      applicationFormData.append("ApplicationId", applicationId.toString());
+      applicationFormData.append("CoverLetter", currentApplication.coverLetter);
+      applicationFormData.append(
+        "BidAmount",
+        currentApplication.bidAmount.toString()
+      );
+      applicationFormData.append("Status", "Hired");
+      applicationFormData.append("CVFile", ""); // Empty CVFile as required
+
+      await api.put("/api/Application", applicationFormData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      // 2. Update Job Post status to "Inprogress"
+      const jobUpdateData = {
+        jobPostId: job!.jobPostId,
+        title: job!.title,
+        description: job!.description,
+        categoryId: job!.categoryId,
+        location: job!.location,
+        salaryMin: job!.salaryMin,
+        salaryMax: job!.salaryMax,
+        jobType: job!.jobType,
+        status: "Inprogress", // Change status to Inprogress
+        deadline: job!.deadline,
+      };
+
+      await api.put("/api/JobPost", jobUpdateData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      // Update local state
+      // Remove hired application from list (since we only show Pending & Reviewed)
+      setApplications((prev) =>
+        prev.filter((app) => app.applicationId !== applicationId)
+      );
+
+      // Update job status locally
+      setJob((prev) => (prev ? { ...prev, status: "Inprogress" } : null));
+      setFormData((prev) => ({ ...prev, status: "Inprogress" }));
+
       handleCloseModal();
-      showToast("Freelancer hired successfully!", "success");
-    } catch (error) {
+      showToast(
+        "Freelancer hired successfully! Job status updated to In Progress.",
+        "success"
+      );
+    } catch (error: any) {
       console.error("Failed to hire freelancer:", error);
-      showToast("Failed to hire freelancer", "error");
+
+      // Handle specific error messages
+      const errorMessage =
+        error.response?.data?.message ||
+        error.response?.data ||
+        "Failed to hire freelancer";
+
+      showToast(errorMessage, "error");
     }
   };
 
   const handleDecline = async (applicationId: number) => {
     try {
-      // Call decline API here
-      console.log("Declining application:", applicationId);
-      // await api.post(`/api/Application/${applicationId}/decline`);
+      // Find the current application to get its data
+      const currentApplication = applications.find(
+        (app) => app.applicationId === applicationId
+      );
 
-      // Update application status
+      if (!currentApplication) {
+        showToast("Application not found", "error");
+        return;
+      }
+
+      // Create FormData for multipart/form-data request
+      const formData = new FormData();
+      formData.append("ApplicationId", applicationId.toString());
+      formData.append("CoverLetter", currentApplication.coverLetter);
+      formData.append("BidAmount", currentApplication.bidAmount.toString());
+      formData.append("Status", "Rejected"); // Set status to Rejected
+      formData.append("CVFile", ""); // Empty CVFile as required
+
+      // Call API to decline application
+      await api.put("/api/Application", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      // Remove declined application from the list (since we only show Pending & Reviewed)
+      setApplications((prev) =>
+        prev.filter((app) => app.applicationId !== applicationId)
+      );
+
+      handleCloseModal();
+      showToast("Application declined successfully!", "success");
+    } catch (error: any) {
+      console.error("Failed to decline application:", error);
+
+      // Handle specific error messages
+      const errorMessage =
+        error.response?.data?.message ||
+        error.response?.data ||
+        "Failed to decline application";
+
+      showToast(errorMessage, "error");
+    }
+  };
+
+  const handleMarkAsReviewed = async (applicationId: number) => {
+    try {
+      // Find the current application to get its data
+      const currentApplication = applications.find(
+        (app) => app.applicationId === applicationId
+      );
+
+      if (!currentApplication) {
+        showToast("Application not found", "error");
+        return;
+      }
+
+      // Create FormData for multipart/form-data request
+      const formData = new FormData();
+      formData.append("ApplicationId", applicationId.toString());
+      formData.append("CoverLetter", currentApplication.coverLetter);
+      formData.append("BidAmount", currentApplication.bidAmount.toString());
+      formData.append("Status", "Reviewed");
+      formData.append("CVFile", ""); // Empty CVFile as required
+
+      // Call API to mark as reviewed
+      await api.put("/api/Application", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      // Update application status locally
       setApplications((prev) =>
         prev.map((app) =>
           app.applicationId === applicationId
-            ? { ...app, status: "Declined" }
+            ? { ...app, status: "Reviewed" }
             : app
         )
       );
 
       handleCloseModal();
-      showToast("Application declined", "success");
-    } catch (error) {
-      console.error("Failed to decline application:", error);
-      showToast("Failed to decline application", "error");
+      showToast("Application marked as reviewed!", "success");
+    } catch (error: any) {
+      console.error("Failed to mark application as reviewed:", error);
+
+      // Handle specific error messages
+      const errorMessage =
+        error.response?.data?.message ||
+        error.response?.data ||
+        "Failed to mark application as reviewed";
+
+      showToast(errorMessage, "error");
     }
   };
 
@@ -571,13 +795,11 @@ const ClientJobDetailPage = () => {
   };
 
   const handleDelete = async () => {
-    if (!window.confirm("Are you sure you want to delete this job post?")) {
-      return;
-    }
-
     try {
       setIsDeleting(true);
       await api.delete(`/api/JobPost/${jobId}`);
+
+      setShowDeleteConfirm(false);
       showToast("Job post deleted successfully!", "success");
 
       // Redirect to my job posts after successful deletion
@@ -589,6 +811,44 @@ const ClientJobDetailPage = () => {
       showToast("Failed to delete job post", "error");
     } finally {
       setIsDeleting(false);
+    }
+  };
+
+  const handleClosePost = async () => {
+    try {
+      setIsClosing(true);
+
+      // Update job status to "Closed"
+      const jobUpdateData = {
+        jobPostId: job!.jobPostId,
+        title: job!.title,
+        description: job!.description,
+        categoryId: job!.categoryId,
+        location: job!.location,
+        salaryMin: job!.salaryMin,
+        salaryMax: job!.salaryMax,
+        jobType: job!.jobType,
+        status: "Closed",
+        deadline: job!.deadline,
+      };
+
+      await api.put("/api/JobPost", jobUpdateData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      // Update local state
+      setJob((prev) => (prev ? { ...prev, status: "Closed" } : null));
+      setFormData((prev) => ({ ...prev, status: "Closed" }));
+
+      setShowCloseConfirm(false);
+      showToast("Job post closed successfully!", "success");
+    } catch (error: any) {
+      console.error("Failed to close job post:", error);
+      showToast("Failed to close job post", "error");
+    } finally {
+      setIsClosing(false);
     }
   };
 
@@ -676,6 +936,19 @@ const ClientJobDetailPage = () => {
     );
   };
 
+  const [applicationFilter, setApplicationFilter] = useState<
+    "all" | "pending" | "reviewed"
+  >("all");
+
+  const filteredApplications = React.useMemo(() => {
+    if (applicationFilter === "all") return applications;
+    if (applicationFilter === "pending")
+      return applications.filter((app) => app.status === "Pending");
+    if (applicationFilter === "reviewed")
+      return applications.filter((app) => app.status === "Reviewed");
+    return applications;
+  }, [applications, applicationFilter]);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-white flex justify-center items-center pt-20">
@@ -761,6 +1034,29 @@ const ClientJobDetailPage = () => {
             <div className="flex gap-3">
               {!isEditing ? (
                 <>
+                  {/* Close Post Button */}
+                  {job.status !== "Closed" && (
+                    <button
+                      onClick={() => setShowCloseConfirm(true)}
+                      className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
+                    >
+                      <svg
+                        className="w-4 h-4"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                        />
+                      </svg>
+                      Close Post
+                    </button>
+                  )}
+
                   <button
                     onClick={() => setIsEditing(true)}
                     className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
@@ -780,10 +1076,10 @@ const ClientJobDetailPage = () => {
                     </svg>
                     Edit
                   </button>
+
                   <button
-                    onClick={handleDelete}
-                    disabled={isDeleting}
-                    className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2 disabled:opacity-50"
+                    onClick={() => setShowDeleteConfirm(true)}
+                    className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-medium transition-colors flex items-center gap-2"
                   >
                     <svg
                       className="w-4 h-4"
@@ -798,7 +1094,7 @@ const ClientJobDetailPage = () => {
                         d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
                       />
                     </svg>
-                    {isDeleting ? "Deleting..." : "Delete"}
+                    Delete
                   </button>
                 </>
               ) : (
@@ -1090,13 +1386,57 @@ const ClientJobDetailPage = () => {
               <p className="text-gray-600">
                 {applications.length} applications found (Pending & Reviewed)
               </p>
+
+              {/* Filter Tabs */}
+              <div className="flex gap-2 mt-4">
+                <button
+                  onClick={() => setApplicationFilter("all")}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    applicationFilter === "all"
+                      ? "bg-orange-100 text-orange-800"
+                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  }`}
+                >
+                  All ({applications.length})
+                </button>
+                <button
+                  onClick={() => setApplicationFilter("pending")}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    applicationFilter === "pending"
+                      ? "bg-orange-100 text-orange-800"
+                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  }`}
+                >
+                  Pending (
+                  {
+                    applications.filter((app) => app.status === "Pending")
+                      .length
+                  }
+                  )
+                </button>
+                <button
+                  onClick={() => setApplicationFilter("reviewed")}
+                  className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                    applicationFilter === "reviewed"
+                      ? "bg-orange-100 text-orange-800"
+                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                  }`}
+                >
+                  Reviewed (
+                  {
+                    applications.filter((app) => app.status === "Reviewed")
+                      .length
+                  }
+                  )
+                </button>
+              </div>
             </div>
 
             {loadingApplications ? (
               <div className="flex justify-center items-center py-12">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-500"></div>
               </div>
-            ) : applications.length === 0 ? (
+            ) : filteredApplications.length === 0 ? (
               <div className="text-center py-12">
                 <div className="bg-gray-50 rounded-lg p-8">
                   <svg
@@ -1113,20 +1453,19 @@ const ClientJobDetailPage = () => {
                     />
                   </svg>
                   <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                    No Applications Yet
+                    No Applications Found
                   </h3>
                   <p className="text-gray-600">
-                    No pending or reviewed applications found for this job post.
+                    No applications found for the selected filter.
                   </p>
                 </div>
               </div>
             ) : (
               <div className="space-y-4">
-                {applications.map((application) => (
+                {filteredApplications.map((application) => (
                   <div
                     key={application.applicationId}
-                    onClick={() => handleApplicationClick(application)}
-                    className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all cursor-pointer p-6"
+                    className="bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-all p-6"
                   >
                     <div className="flex items-start gap-6">
                       {/* Freelancer Avatar */}
@@ -1172,15 +1511,38 @@ const ClientJobDetailPage = () => {
                             <div className="text-2xl font-bold text-green-600 mb-1">
                               {formatSalaryShort(application.bidAmount)}
                             </div>
-                            <span
-                              className={`px-3 py-1 rounded-full text-sm font-medium ${
-                                application.status === "Pending"
-                                  ? "bg-yellow-100 text-yellow-800"
-                                  : "bg-blue-100 text-blue-800"
-                              }`}
-                            >
-                              {application.status}
-                            </span>
+                            <div className="flex items-center gap-2">
+                              <span
+                                className={`px-3 py-1 rounded-full text-sm font-medium ${
+                                  application.status === "Pending"
+                                    ? "bg-yellow-100 text-yellow-800"
+                                    : "bg-blue-100 text-blue-800"
+                                }`}
+                              >
+                                {application.status}
+                              </span>
+                              {application.status === "Reviewed" && (
+                                <svg
+                                  className="w-5 h-5 text-blue-500"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                  />
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                                  />
+                                </svg>
+                              )}
+                            </div>
                           </div>
                         </div>
 
@@ -1189,11 +1551,51 @@ const ClientJobDetailPage = () => {
                           {application.coverLetter}
                         </p>
 
-                        {/* Applied Date */}
-                        <p className="text-sm text-gray-500">
-                          Applied{" "}
-                          {formatDateRelativeShort(application.appliedAt)}
-                        </p>
+                        {/* Applied Date and Actions */}
+                        <div className="flex items-center justify-between">
+                          <p className="text-sm text-gray-500">
+                            Applied{" "}
+                            {formatDateRelativeShort(application.appliedAt)}
+                          </p>
+
+                          {/* Quick Actions */}
+                          <div className="flex gap-2">
+                            {application.status === "Pending" && (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleMarkAsReviewed(
+                                    application.applicationId
+                                  );
+                                }}
+                                className="px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white text-sm rounded-md transition-colors flex items-center gap-1"
+                              >
+                                <svg
+                                  className="w-3 h-3"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  viewBox="0 0 24 24"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                                  />
+                                </svg>
+                                Mark as Reviewed
+                              </button>
+                            )}
+                            <button
+                              onClick={() =>
+                                handleApplicationClick(application)
+                              }
+                              className="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm rounded-md transition-colors"
+                            >
+                              View Details
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -1203,6 +1605,29 @@ const ClientJobDetailPage = () => {
           </div>
         )}
 
+        {/* Confirmation Modals */}
+        <ConfirmationModal
+          isOpen={showCloseConfirm}
+          onClose={() => setShowCloseConfirm(false)}
+          onConfirm={handleClosePost}
+          title="Close Job Post"
+          message="Are you sure you want to close this job post? This will stop receiving new applications, but you can still manage existing ones."
+          confirmText="Close Post"
+          confirmButtonClass="bg-orange-500 hover:bg-orange-600"
+          isLoading={isClosing}
+        />
+
+        <ConfirmationModal
+          isOpen={showDeleteConfirm}
+          onClose={() => setShowDeleteConfirm(false)}
+          onConfirm={handleDelete}
+          title="Delete Job Post"
+          message="Are you sure you want to delete this job post? This action cannot be undone and all associated applications will be lost."
+          confirmText="Delete"
+          confirmButtonClass="bg-red-500 hover:bg-red-600"
+          isLoading={isDeleting}
+        />
+
         {/* Modal */}
         {selectedApplication && (
           <ApplicationDetailModal
@@ -1211,6 +1636,7 @@ const ClientJobDetailPage = () => {
             onClose={handleCloseModal}
             onHire={handleHire}
             onDecline={handleDecline}
+            onMarkAsReviewed={handleMarkAsReviewed} // Pass the new handler
           />
         )}
       </div>

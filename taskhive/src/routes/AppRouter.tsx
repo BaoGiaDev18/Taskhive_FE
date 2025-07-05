@@ -25,6 +25,10 @@ import MembershipPaymentConfirm from "../pages/MembershipPaymentConfirm";
 import BuySlotsPage from "../pages/BuySlotsPage";
 import SlotPaymentConfirm from "../pages/SlotPaymentConfirm.tsx";
 import ApplyFormPage from "../pages/ApplyFormPage";
+import ClientContractPage from "../pages/ClientContractPage.tsx";
+import ClientContractDetailPage from "../pages/ClientContractDetailPage.tsx";
+import FreelancerMyProposalsPage from "../pages/FreelancerMyProposalsPage.tsx";
+import FreelancerMyContractPage from "../pages/FreelancerMyContractPage.tsx";
 
 export default function AppRouter() {
   return (
@@ -188,6 +192,38 @@ export default function AppRouter() {
           element={
             <MainLayout>
               <ApplyFormPage />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/client/my-contracts"
+          element={
+            <MainLayout>
+              <ClientContractPage />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/client/contract/:applicationId"
+          element={
+            <MainLayout>
+              <ClientContractDetailPage />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/my-proposals"
+          element={
+            <MainLayout>
+              <FreelancerMyProposalsPage />
+            </MainLayout>
+          }
+        />
+        <Route
+          path="/my-contracts"
+          element={
+            <MainLayout>
+              <FreelancerMyContractPage />
             </MainLayout>
           }
         />

@@ -518,7 +518,6 @@ const MyJobPostsPage = () => {
         )}
       </div>
 
-      <Footer />
     </div>
   );
 };
