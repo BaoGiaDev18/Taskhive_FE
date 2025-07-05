@@ -1,41 +1,60 @@
-// import LogoutButton from "../components/LogoutButton";
 import { Link } from "react-router-dom";
 import BGImage from "../assets/BGhome.jpg";
-import Logo from "../assets/Logo gốc trên nền đen.png";
 import homeimg1 from "../assets/homeimg.jpg";
 import homeimg2 from "../assets/homeimg2.jpg";
-import homeimg3 from "../assets/homeimg3.jpg";  
-import homeimg4 from "../assets/homeimg4.jpg"; 
-import homeimg5 from "../assets/homeimg5.jpg"; 
-import homeimg6 from "../assets/homeimg6.jpg"; 
-import homeimg7 from "../assets/homeimg7.jpg"; 
-import facebook from "../assets/faceicon.jpg";
-
+import homeimg3 from "../assets/homeimg3.jpg";
+import homeimg4 from "../assets/homeimg4.jpg";
+import homeimg5 from "../assets/homeimg5.jpg";
+import homeimg6 from "../assets/homeimg6.jpg";
+import homeimg7 from "../assets/homeimg7.jpg";
 
 export default function HomePage() {
   return (
     <div className=" bg-white">
-      <section className="relative h-screen bg-cover bg-center text-white flex items-center" style={{ backgroundImage: `linear-gradient(270deg, rgba(83, 83, 83, 0.86) 0%, rgba(25, 25, 25, 0.688) 33.5%, rgba(25, 25, 25, 0.86) 100%), url(${BGImage})` }}>
+      <section
+        className="relative h-screen bg-cover bg-center text-white flex items-center"
+        style={{
+          backgroundImage: `linear-gradient(270deg, rgba(83, 83, 83, 0.86) 0%, rgba(25, 25, 25, 0.688) 33.5%, rgba(25, 25, 25, 0.86) 100%), url(${BGImage})`,
+        }}
+      >
         <div className="max-w-4xl mx-auto px-6 space-y-6">
-          <h1 className="text-5xl font-bold bg-gradient-to-r from-orange-500 to-yellow-400 bg-clip-text text-transparent">Connect with the best job opportunities</h1>
-          <p className="text-xl leading-relaxed">Need expert help? Discover top-rated freelancers for all your business needs. From design to development, find the right talent in minutes.</p>
-          <button className="bg-gradient-to-r from-orange-500 to-yellow-400 text-black font-bold px-8 py-3 rounded-xl text-xl">Sign up now</button>
+          <h1 className="text-5xl font-bold bg-gradient-to-r from-orange-500 to-yellow-400 bg-clip-text text-transparent">
+            Connect with the best job opportunities
+          </h1>
+          <p className="text-xl leading-relaxed">
+            Need expert help? Discover top-rated freelancers for all your
+            business needs. From design to development, find the right talent in
+            minutes.
+          </p>
+          <button className="bg-gradient-to-r from-orange-500 to-yellow-400 text-black font-bold px-8 py-3 rounded-xl text-xl">
+            Sign up now
+          </button>
         </div>
       </section>
 
       <section className="py-20 px-6 bg-white flex flex-col md:flex-row items-center max-w-7xl mx-auto">
         <div className="w-full md:w-1/2 mb-10 md:mb-0">
-          <img src={homeimg1} alt="Job Search" className="rounded-2xl shadow-xl" />
+          <img
+            src={homeimg1}
+            alt="Job Search"
+            className="rounded-2xl shadow-xl"
+          />
         </div>
         <div className="w-full md:w-1/2 md:pl-10 space-y-6">
-          <h2 className="text-4xl font-bold text-gray-800">Job Searching Made Easy</h2>
-          <p className="text-lg text-gray-600">Find the perfect job effortlessly with TaskHive.</p>
+          <h2 className="text-4xl font-bold text-gray-800">
+            Job Searching Made Easy
+          </h2>
+          <p className="text-lg text-gray-600">
+            Find the perfect job effortlessly with TaskHive.
+          </p>
           <ul className="text-gray-700 space-y-2">
             <li>✓ Access over 10,000 job listings from leading companies</li>
             <li>✓ Connect with employers quickly and efficiently</li>
             <li>✓ Simple and seamless application process</li>
           </ul>
-          <button className="mt-4 bg-gradient-to-r from-orange-500 to-yellow-400 text-black font-bold px-6 py-3 rounded-xl">Get Started</button>
+          <button className="mt-4 bg-gradient-to-r from-orange-500 to-yellow-400 text-black font-bold px-6 py-3 rounded-xl">
+            Get Started
+          </button>
         </div>
       </section>
 
@@ -48,13 +67,21 @@ export default function HomePage() {
         <div className="flex flex-col md:flex-row justify-center gap-12 max-w-7xl mx-auto">
           {/* Clients Card */}
           <div className="bg-white rounded-2xl overflow-hidden shadow-lg max-w-sm">
-            <img src={homeimg2} alt="Clients" className="w-full h-56 object-cover" />
+            <img
+              src={homeimg2}
+              alt="Clients"
+              className="w-full h-56 object-cover"
+            />
             <div className="p-6 text-black">
               <h3 className="text-lg font-semibold mb-2">Clients</h3>
               <p className="mb-4 text-sm">
-                Looking for skilled professionals? Connect with top freelancers to get your projects done efficiently.
+                Looking for skilled professionals? Connect with top freelancers
+                to get your projects done efficiently.
               </p>
-              <Link to="/hire-freelancer" className="text-orange-500 font-semibold">
+              <Link
+                to="/hire-freelancer"
+                className="text-orange-500 font-semibold"
+              >
                 Hire Freelancer →
               </Link>
             </div>
@@ -62,11 +89,16 @@ export default function HomePage() {
 
           {/* Freelancers Card */}
           <div className="bg-white rounded-2xl overflow-hidden shadow-lg max-w-sm">
-            <img src={homeimg3} alt="Freelancers" className="w-full h-56 object-cover" />
+            <img
+              src={homeimg3}
+              alt="Freelancers"
+              className="w-full h-56 object-cover"
+            />
             <div className="p-6 text-black">
               <h3 className="text-lg font-semibold mb-2">Freelancers</h3>
               <p className="mb-4 text-sm">
-                Find job opportunities that match your skills and work on projects you love. Join TaskHive today!
+                Find job opportunities that match your skills and work on
+                projects you love. Join TaskHive today!
               </p>
               <Link to="/find-work" className="text-orange-500 font-semibold">
                 Find Work →
@@ -77,113 +109,87 @@ export default function HomePage() {
       </section>
 
       {/* Explore Categories */}
-<section className="bg-white py-20 px-6 max-w-7xl mx-auto">
-  <h2 className="text-3xl font-bold text-gray-900 mb-8">Explore Categories</h2>
+      <section className="bg-white py-20 px-6 max-w-7xl mx-auto">
+        <h2 className="text-3xl font-bold text-gray-900 mb-8">
+          Explore Categories
+        </h2>
 
-  <div>
-    <h3 className="text-xl font-semibold text-gray-800 mb-4">Web Developer</h3>
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-      <div>
-        <img src={homeimg4} alt="Frontend Dev" className="rounded-lg" />
-        <p className="mt-2 font-medium text-sm">Frontend Development</p>
-      </div>
-      <div>
-        <img src={homeimg5} alt="Backend Dev" className="rounded-lg" />
-        <p className="mt-2 font-medium text-sm">Backend Development</p>
-      </div>
-      <div>
-        <img src={homeimg6} alt="E-commerce" className="rounded-lg" />
-        <p className="mt-2 font-medium text-sm">E-commerce Solutions</p>
-      </div>
-      <div>
-        <img src={homeimg7} alt="CMS" className="rounded-lg" />
-        <p className="mt-2 font-medium text-sm">WordPress & CMS</p>
-      </div>
-    </div>
-    <p className="text-orange-500 mt-2 text-sm text-right">Details →</p>
-  </div>
-</section>
-
-{/* Our Service */}
-<section className="bg-gradient-to-br from-white via-[#FFF2E2] to-white py-20 px-6">
-  <div className="max-w-7xl mx-auto">
-    <h2 className="text-3xl font-bold text-gray-900 mb-12">Our Service</h2>
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-10 text-gray-800">
-      <div>
-        <h4 className="font-semibold text-lg mb-2 flex items-center gap-2">
-          💲 Secure Payment
-        </h4>
-        <p>Enjoy a safe and reliable payment system that protects both parties.</p>
-      </div>
-      <div>
-        <h4 className="font-semibold text-lg mb-2 flex items-center gap-2">
-          🧑‍💼 Freelancer Marketplace
-        </h4>
-        <p>Connect with top professionals across various industries for your projects.</p>
-      </div>
-      <div>
-        <h4 className="font-semibold text-lg mb-2 flex items-center gap-2">
-          🔄 Flexible Hiring
-        </h4>
-        <p>Hire freelancers per project or hourly, tailored to your business needs.</p>
-      </div>
-      <div>
-        <h4 className="font-semibold text-lg mb-2 flex items-center gap-2">
-          ✅ Quality Assurance
-        </h4>
-        <p>Verified services ensure trust and high-quality work delivery.</p>
-      </div>
-    </div>
-    <div className="text-center mt-12">
-      <button className="px-8 py-3 border border-orange-400 text-orange-500 font-semibold rounded-full hover:bg-orange-50">
-        Browse more
-      </button>
-    </div>
-  </div>
-</section>
-
-      <footer className="bg-[#191919] text-white py-16 px-10">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
-          <div>
-            <img src={Logo} alt="TaskHive Logo" className="h-12 mb-6" />
-            <div className="flex space-x-4">
-              <img src={facebook} alt="fb" className="h-6" />
-              <img src="/twitter-icon.png" alt="twitter" className="h-6" />
-              <img src="/linkedin-icon.png" alt="linkedin" className="h-6" />
+        <div>
+          <h3 className="text-xl font-semibold text-gray-800 mb-4">
+            Web Developer
+          </h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+            <div>
+              <img src={homeimg4} alt="Frontend Dev" className="rounded-lg" />
+              <p className="mt-2 font-medium text-sm">Frontend Development</p>
+            </div>
+            <div>
+              <img src={homeimg5} alt="Backend Dev" className="rounded-lg" />
+              <p className="mt-2 font-medium text-sm">Backend Development</p>
+            </div>
+            <div>
+              <img src={homeimg6} alt="E-commerce" className="rounded-lg" />
+              <p className="mt-2 font-medium text-sm">E-commerce Solutions</p>
+            </div>
+            <div>
+              <img src={homeimg7} alt="CMS" className="rounded-lg" />
+              <p className="mt-2 font-medium text-sm">WordPress & CMS</p>
             </div>
           </div>
-          <div>
-            <h4 className="font-bold text-lg mb-3">For Clients</h4>
-            <ul className="space-y-2">
-              <li><Link to="/how-to-hire" className="text-white">How to Hire</Link></li>
-              <li><Link to="/project-catalog" className="text-white">Project Catalog</Link></li>
-            </ul>
+          <p className="text-orange-500 mt-2 text-sm text-right">Details →</p>
+        </div>
+      </section>
+
+      {/* Our Service */}
+      <section className="bg-gradient-to-br from-white via-[#FFF2E2] to-white py-20 px-6">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-3xl font-bold text-gray-900 mb-12">
+            Our Service
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 text-gray-800">
+            <div>
+              <h4 className="font-semibold text-lg mb-2 flex items-center gap-2">
+                💲 Secure Payment
+              </h4>
+              <p>
+                Enjoy a safe and reliable payment system that protects both
+                parties.
+              </p>
+            </div>
+            <div>
+              <h4 className="font-semibold text-lg mb-2 flex items-center gap-2">
+                🧑‍💼 Freelancer Marketplace
+              </h4>
+              <p>
+                Connect with top professionals across various industries for
+                your projects.
+              </p>
+            </div>
+            <div>
+              <h4 className="font-semibold text-lg mb-2 flex items-center gap-2">
+                🔄 Flexible Hiring
+              </h4>
+              <p>
+                Hire freelancers per project or hourly, tailored to your
+                business needs.
+              </p>
+            </div>
+            <div>
+              <h4 className="font-semibold text-lg mb-2 flex items-center gap-2">
+                ✅ Quality Assurance
+              </h4>
+              <p>
+                Verified services ensure trust and high-quality work delivery.
+              </p>
+            </div>
           </div>
-          <div>
-            <h4 className="font-bold text-lg mb-3">For Talents</h4>
-            <ul className="space-y-2">
-              <li><Link to="/how-to-find-work" className="text-white">How to find work</Link></li>
-              <li><Link to="/freelance-jobs" className="text-white">Freelance Jobs in HCM</Link></li>
-              <li><Link to="/ads" className="text-white">Win work with ads</Link></li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-bold text-lg mb-3">Company</h4>
-            <ul className="space-y-2">
-              <li><Link to="/about" className="text-white">About Us</Link></li>
-              <li><Link to="/leadership" className="text-white">Leadership</Link></li>
-              <li><Link to="/careers" className="text-white">Careers</Link></li>
-            </ul>
+          <div className="text-center mt-12">
+            <button className="px-8 py-3 border border-orange-400 text-orange-500 font-semibold rounded-full hover:bg-orange-50">
+              Browse more
+            </button>
           </div>
         </div>
-        <div className="border-t border-white mt-12 pt-6 text-sm flex justify-between">
-          <p>© 2024 - 2025 TaskHive® Global Inc.</p>
-          <div className="space-x-6">
-            <Link to="/terms" className="text-white">Terms of Service</Link>
-            <Link to="/privacy" className="text-white">Privacy Policy</Link>
-          </div>
-        </div>
-      </footer>
+      </section>
     </div>
   );
 }
