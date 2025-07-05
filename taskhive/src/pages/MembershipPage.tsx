@@ -51,7 +51,7 @@ const MembershipPlansPage: React.FC = () => {
     const fetchActive = async () => {
       try {
         const res = await api.get<{ membershipId: number }[]>(
-          `/api/UserMemberships/active/${userId}`
+          `/api/UserMembership/active/${userId}`
         );
         // endpoint trả về array, mình chỉ cần membershipId đầu tiên (nếu có)
         if (res.data.length > 0) {
