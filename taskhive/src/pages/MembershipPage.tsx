@@ -120,8 +120,7 @@ const MembershipPlansPage: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
           {memberships.map((plan, index) => {
-            // Xác định kế hoạch này có phải current không?
-            const isCurrent =
+            const isActive =
               activeMembershipId !== null
                 ? plan.membershipId === activeMembershipId
                 : index === 0;
@@ -130,7 +129,7 @@ const MembershipPlansPage: React.FC = () => {
               <div
                 key={plan.membershipId}
                 className={`rounded-xl shadow-md p-6 border ${
-                  isCurrent
+                  isActive
                     ? "bg-white border-gray-300"
                     : "bg-blue-50 border-blue-500"
                 }`}
@@ -150,11 +149,11 @@ const MembershipPlansPage: React.FC = () => {
                   <li>• Status: {plan.status ? "Active" : "Inactive"}</li>
                 </ul>
 
-                {isCurrent ? (
+                {isActive ? (
                   <span className="text-sm text-gray-400 italic">
                     This is your current plan
                   </span>
-                ) : (
+                ) : index === 0 ? null : (
                   <button
                     className="mt-4 px-5 py-2 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition"
                     onClick={() => handleUpgradeClick(plan)}
