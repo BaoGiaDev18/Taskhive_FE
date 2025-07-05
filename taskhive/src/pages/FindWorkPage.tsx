@@ -5,7 +5,6 @@ import JobCard from "../components/JobCard";
 import BGImage from "../assets/BGhome.jpg";
 import CategoryFilter from "../components/CategoryFilter";
 import api from "../services/api";
-import Footer from "../components/Footer";
 
 interface Category {
   categoryId: number;
@@ -406,7 +405,6 @@ const FindWork = () => {
         </div>
       </div>
 
-      <Footer />
     </div>
   );
 };

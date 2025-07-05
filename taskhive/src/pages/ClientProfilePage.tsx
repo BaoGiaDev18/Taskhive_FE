@@ -88,7 +88,7 @@ const ClientProfilePage: React.FC = () => {
     setLoading(true);
     try {
       const response = await api.get(`/api/User/client/${userId}`);
-      setProfile(response.data);
+      setProfile(response.data.profile);
     } catch (error: any) {
       console.error("Failed to fetch client profile:", error);
       if (error.response?.status === 404) {

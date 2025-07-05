@@ -20,6 +20,13 @@ interface JobPost {
   createdAt: string;
   updatedAt: string;
   deadline: string;
+  applicationCount?: number; // Add this property
+}
+
+interface Application {
+  applicationId: number;
+  status: string;
+  // Add other properties as needed
 }
 
 const MyJobPostsPage = () => {
@@ -28,6 +35,9 @@ const MyJobPostsPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>("");
   const [, setEmployerId] = useState<number>(0);
+  const [loadingApplications, setLoadingApplications] = useState<{
+    [key: number]: boolean;
+  }>({});
 
   // Helper function to decode JWT token (same as CreateJobPost)
   const decodeJWT = (token: string) => {
@@ -83,6 +93,51 @@ const MyJobPostsPage = () => {
     }
   };
 
+  // Fetch application count for a specific job post
+  const fetchApplicationCount = async (jobPostId: number): Promise<number> => {
+    try {
+      setLoadingApplications((prev) => ({ ...prev, [jobPostId]: true }));
+
+      const response = await api.get(`/api/Application/jobpost/${jobPostId}`);
+      const applications: Application[] = response.data;
+
+      // Count only applications with status "Pending" or "Reviewed"
+      const validApplications = applications.filter(
+        (app) => app.status === "Pending" || app.status === "Reviewed"
+      );
+
+      return validApplications.length;
+    } catch (error: any) {
+      console.error(
+        `Failed to fetch applications for job ${jobPostId}:`,
+        error
+      );
+      // Return 0 if there's an error (like 404 for no applications)
+      return 0;
+    } finally {
+      setLoadingApplications((prev) => ({ ...prev, [jobPostId]: false }));
+    }
+  };
+
+  // Fetch all application counts for job posts
+  const fetchAllApplicationCounts = async (jobPosts: JobPost[]) => {
+    try {
+      const updatedJobPosts = await Promise.all(
+        jobPosts.map(async (job) => {
+          const applicationCount = await fetchApplicationCount(job.jobPostId);
+          return {
+            ...job,
+            applicationCount,
+          };
+        })
+      );
+
+      setJobPosts(updatedJobPosts);
+    } catch (error) {
+      console.error("Failed to fetch application counts:", error);
+    }
+  };
+
   useEffect(() => {
     // Get employerId from JWT token and fetch job posts
     const userIdFromToken = getEmployerIdFromToken();
@@ -98,8 +153,12 @@ const MyJobPostsPage = () => {
     try {
       setLoading(true);
       const response = await api.get(`/api/JobPost/employer/${employerId}`);
-      setJobPosts(response.data);
+      const jobPostsData = response.data;
+      setJobPosts(jobPostsData);
       setError("");
+
+      // Fetch application counts for all job posts
+      await fetchAllApplicationCounts(jobPostsData);
     } catch (error: any) {
       console.error("Failed to fetch job posts:", error);
       if (error.response?.status === 404) {
@@ -311,11 +370,44 @@ const MyJobPostsPage = () => {
                 )}
 
                 {/* Header with Status and Category */}
-                <div className="flex items-center gap-3 mb-3">
-                  {getStatusBadge(job.status)}
-                  <span className="bg-orange-100 text-orange-800 px-2.5 py-1 rounded-md text-sm font-medium">
-                    {job.categoryName}
-                  </span>
+                <div className="flex items-center justify-between mb-3">
+                  <div className="flex items-center gap-3">
+                    {getStatusBadge(job.status)}
+                    <span className="bg-orange-100 text-orange-800 px-2.5 py-1 rounded-md text-sm font-medium">
+                      {job.categoryName}
+                    </span>
+                  </div>
+
+                  {/* Application Count Badge */}
+                  <div className="flex items-center gap-2">
+                    {loadingApplications[job.jobPostId] ? (
+                      <div className="flex items-center gap-2 bg-gray-100 px-3 py-1.5 rounded-md">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-orange-500"></div>
+                        <span className="text-sm text-gray-600">
+                          Loading...
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2 bg-blue-100 text-blue-800 px-3 py-1.5 rounded-md">
+                        <svg
+                          className="w-4 h-4"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+                          />
+                        </svg>
+                        <span className="text-sm font-medium">
+                          {job.applicationCount || 0} Applications
+                        </span>
+                      </div>
+                    )}
+                  </div>
                 </div>
 
                 {/* Job Title */}
@@ -382,7 +474,7 @@ const MyJobPostsPage = () => {
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
               Summary
             </h3>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
               <div className="text-center">
                 <div className="text-2xl font-bold text-green-600">
                   {jobPosts.filter((job) => job.status === "Open").length}
@@ -411,6 +503,15 @@ const MyJobPostsPage = () => {
                   }
                 </div>
                 <div className="text-sm text-gray-600">Near Deadline</div>
+              </div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-purple-600">
+                  {jobPosts.reduce(
+                    (total, job) => total + (job.applicationCount || 0),
+                    0
+                  )}
+                </div>
+                <div className="text-sm text-gray-600">Total Applications</div>
               </div>
             </div>
           </div>
