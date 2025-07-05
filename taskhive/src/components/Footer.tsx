@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import Logo from "../assets/Logo gốc trên nền đen.png";
-import facebook from "../assets/faceicon.jpg";
 
 const Footer = () => {
   return (
