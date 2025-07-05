@@ -22,6 +22,7 @@ interface FreelancerProfile {
   email: string;
   fullName: string;
   userName: string | null;
+  remainingSlots: number;
   cvFile: string;
   portfolioUrl: string;
   country: string;
@@ -970,6 +971,27 @@ const ProfilePage: React.FC = () => {
                 </h3>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Remaining Slots - FIELD MỚI */}
+                    <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Remaining Job Application Slots
+                    </label>
+                    <div className="py-2 flex items-center gap-3">
+                      <span className="text-lg font-semibold text-gray-900">
+                      {profile.remainingSlots}
+                      </span>
+                      <span className="text-sm text-gray-500">
+                      slots remaining
+                      </span>
+                      <a
+                      href="/buy-slots"
+                      className="ml-4 text-[#F57C00] hover:underline font-medium text-sm bg-[#F57C00]/10 px-3 py-1 rounded transition"
+                      >
+                      Buy more slots
+                      </a>
+                    </div>
+                    </div>
+
                   {/* Portfolio URL */}
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -1038,7 +1060,7 @@ const ProfilePage: React.FC = () => {
                     </p>
                   </div>
 
-                  {/* Skills Section */}
+                  {/* Skills Section - full width */}
                   <div className="md:col-span-2">
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Skills
