@@ -172,7 +172,81 @@ const JobDetailPage = () => {
     ));
   };
 
+  // Add function to check if job is closed or expired
+  const isJobClosed = () => {
+    if (!job) return false;
+
+    // Check if status is "Closed"
+    if (job.status === "Closed") return true;
+
+    // Check if deadline has passed
+    const deadlineDate = new Date(job.deadline);
+    const currentDate = new Date();
+    return deadlineDate < currentDate;
+  };
+
+  const getJobStatusInfo = () => {
+    if (!job) return { canApply: false, message: "" };
+
+    // Check if status is "Closed"
+    if (job.status === "Closed") {
+      return {
+        canApply: false,
+        message: "This job post has been closed by the client.",
+      };
+    }
+
+    // Check if deadline has passed
+    const deadlineDate = new Date(job.deadline);
+    const currentDate = new Date();
+    if (deadlineDate < currentDate) {
+      return {
+        canApply: false,
+        message: "The application deadline has passed.",
+      };
+    }
+
+    // Check if job is in progress
+    if (job.status === "Inprogress") {
+      return {
+        canApply: false,
+        message: "This job is currently in progress.",
+      };
+    }
+
+    return { canApply: true, message: "" };
+  };
+
+  const getStatusBadge = (status: string) => {
+    const statusConfig = {
+      Open: { bg: "bg-green-100", text: "text-green-800", label: "Open" },
+      Closed: { bg: "bg-red-100", text: "text-red-800", label: "Closed" },
+      Inprogress: {
+        bg: "bg-blue-100",
+        text: "text-blue-800",
+        label: "In Progress",
+      },
+    };
+
+    const config =
+      statusConfig[status as keyof typeof statusConfig] || statusConfig.Open;
+
+    return (
+      <span
+        className={`px-3 py-1 rounded-full text-sm font-medium ${config.bg} ${config.text}`}
+      >
+        {config.label}
+      </span>
+    );
+  };
+
   const handleApply = () => {
+    const statusInfo = getJobStatusInfo();
+
+    if (!statusInfo.canApply) {
+      return; // Don't allow apply if job is closed/expired
+    }
+
     if (!isAuthenticated) {
       navigate("/login");
     } else {
@@ -228,6 +302,8 @@ const JobDetailPage = () => {
     ? reviewData?.reviews || []
     : (reviewData?.reviews || []).slice(0, 5);
 
+  const statusInfo = getJobStatusInfo();
+
   return (
     <div className="bg-white min-h-screen pt-20">
       {/* Header */}
@@ -252,7 +328,12 @@ const JobDetailPage = () => {
             </svg>
             Back to Jobs
           </Link>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">{job.title}</h1>
+
+          <div className="flex items-center gap-4 mb-2">
+            <h1 className="text-3xl font-bold text-gray-900">{job.title}</h1>
+            {getStatusBadge(job.status)}
+          </div>
+
           <div className="flex items-center gap-4 text-gray-600">
             <span>{job.location}</span>
             <span>•</span>
@@ -274,7 +355,7 @@ const JobDetailPage = () => {
                 Job Details
               </h2>
 
-              {/* Salary and Type */}
+              {/* Job Status and Info */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 <div>
                   <h3 className="text-sm font-medium text-gray-500 mb-1">
@@ -296,20 +377,34 @@ const JobDetailPage = () => {
                   <h3 className="text-sm font-medium text-gray-500 mb-1">
                     Application Deadline
                   </h3>
-                  <p className="text-lg font-semibold text-gray-900">
+                  <p
+                    className={`text-lg font-semibold ${
+                      isJobClosed() ? "text-red-600" : "text-gray-900"
+                    }`}
+                  >
                     {formatDate(job.deadline)}
+                    {new Date(job.deadline) < new Date() && (
+                      <span className="text-red-600 text-sm block">
+                        (Expired)
+                      </span>
+                    )}
                   </p>
                 </div>
               </div>
 
-              {/* Category */}
+              {/* Category and Status */}
               <div className="mb-6">
                 <h3 className="text-sm font-medium text-gray-500 mb-2">
                   Category
                 </h3>
-                <span className="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-medium">
-                  {job.categoryName}
-                </span>
+                <div className="flex items-center gap-3">
+                  <span className="bg-orange-100 text-orange-800 px-3 py-1 rounded-full text-sm font-medium">
+                    {job.categoryName}
+                  </span>
+                  <span className="text-sm text-gray-500">
+                    Status: {getStatusBadge(job.status)}
+                  </span>
+                </div>
               </div>
 
               {/* Description */}
@@ -390,12 +485,44 @@ const JobDetailPage = () => {
           <div className="space-y-6">
             {/* Apply Button */}
             <div className="bg-white rounded-xl border border-gray-200 p-6">
-              <button
-                onClick={handleApply}
-                className="w-full bg-gradient-to-r from-orange-500 to-yellow-400 text-black font-bold py-3 px-6 rounded-lg text-lg hover:opacity-90 transition-all"
-              >
-                Apply Now
-              </button>
+              {!statusInfo.canApply ? (
+                <div className="text-center">
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <svg
+                        className="w-5 h-5 text-red-500"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.664-.833-2.464 0L3.34 16.5c-.77.833.192 2.5 1.732 2.5z"
+                        />
+                      </svg>
+                      <span className="font-medium text-red-800">
+                        Applications Closed
+                      </span>
+                    </div>
+                    <p className="text-red-700 text-sm">{statusInfo.message}</p>
+                  </div>
+                  <button
+                    disabled
+                    className="w-full bg-gray-300 text-gray-500 font-bold py-3 px-6 rounded-lg text-lg cursor-not-allowed"
+                  >
+                    Apply Now
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={handleApply}
+                  className="w-full bg-gradient-to-r from-orange-500 to-yellow-400 text-black font-bold py-3 px-6 rounded-lg text-lg hover:opacity-90 transition-all"
+                >
+                  Apply Now
+                </button>
+              )}
             </div>
 
             {/* Client Information */}
@@ -499,7 +626,6 @@ const JobDetailPage = () => {
         </div>
       </div>
 
-      <Footer />
     </div>
   );
 };
