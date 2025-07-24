@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode"; // Thêm import này
 import Logo from "../assets/Logo1.jpg";
 import api from "../services/api";
 import axios from "axios";
@@ -37,6 +38,37 @@ export default function LoginPage() {
 
   const hideToast = () => {
     setToast((prev) => ({ ...prev, isVisible: false }));
+  };
+
+  // Thêm hàm handleRole để redirect theo role
+  const handleRoleBasedRedirect = () => {
+    const token = localStorage.getItem("jwtToken");
+    if (token) {
+      try {
+        const decodedToken = jwtDecode<{ role: string }>(token);
+        const userRole = decodedToken?.role;
+
+        switch (userRole) {
+          case "Freelancer":
+            navigate("/find-work");
+            break;
+          case "Client":
+            navigate("/hirefreelancer");
+            break;
+          case "Admin":
+            navigate("/admin");
+            break;
+          default:
+            navigate("/");
+            break;
+        }
+      } catch (error) {
+        console.error("Error decoding token:", error);
+        navigate("/");
+      }
+    } else {
+      navigate("/");
+    }
   };
 
   const handleResendVerification = async () => {
@@ -79,17 +111,16 @@ export default function LoginPage() {
       });
 
       // Handle regular login response
-    const { accessToken, refreshToken, expiresAt, message } = response.data;
-    
-    // Store tokens in localStorage
-    localStorage.setItem("jwtToken", accessToken);
-    localStorage.setItem("refreshToken", refreshToken);
-    localStorage.setItem("tokenExpiresAt", expiresAt);
+      const { accessToken, refreshToken, expiresAt, message } = response.data;
 
+      // Store tokens in localStorage
+      localStorage.setItem("jwtToken", accessToken);
+      localStorage.setItem("refreshToken", refreshToken);
+      localStorage.setItem("tokenExpiresAt", expiresAt);
 
       showToast(message || "Login successful! Redirecting...", "success");
       setTimeout(() => {
-        window.location.href = "/";
+        handleRoleBasedRedirect();
       }, 1500);
     } catch (err: unknown) {
       if (axios.isAxiosError(err) && err.response) {
@@ -130,8 +161,10 @@ export default function LoginPage() {
         message || "Google login successful! Redirecting...",
         "success"
       );
+
+      // ✅ SỬ DỤNG ROLE-BASED REDIRECT CHO GOOGLE LOGIN
       setTimeout(() => {
-        window.location.href = "/";
+        handleRoleBasedRedirect();
       }, 1500);
     } catch (err: unknown) {
       if (axios.isAxiosError(err) && err.response) {

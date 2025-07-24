@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react"; // Thêm useState và useEffect
+import { useNavigate } from "react-router-dom";
 import BGImage from "../assets/BGhome.jpg";
 import homeimg4 from "../assets/homeimg4.jpg";
 import homeimg5 from "../assets/homeimg5.jpg";
@@ -6,6 +8,23 @@ import homeimg7 from "../assets/homeimg7.jpg";
 import hireimg1 from "../assets/hireimg1.jpg";
 
 export default function HireFreelancerPage() {
+  const navigate = useNavigate();
+  const [isAuthenticated, setIsAuthenticated] = useState(false); // Thêm state authentication
+
+  // Thêm useEffect để check authentication
+  useEffect(() => {
+    checkAuthentication();
+  }, []);
+
+  const checkAuthentication = () => {
+    const token = localStorage.getItem("jwtToken");
+    setIsAuthenticated(!!token);
+  };
+
+  const handleSignUpClick = () => {
+    navigate("/register");
+  };
+
   return (
     <div className="bg-white">
       {/* Hero */}
@@ -24,9 +43,15 @@ export default function HireFreelancerPage() {
             business needs. From design to development, find the right talent in
             minutes.
           </p>
-          <button className="bg-gradient-to-r from-orange-500 to-yellow-400 text-black font-bold px-8 py-3 rounded-xl text-xl">
-            Sign up now
-          </button>
+          {/* Chỉ hiển thị nút Sign up nếu chưa đăng nhập */}
+          {!isAuthenticated && (
+            <button
+              onClick={handleSignUpClick}
+              className="bg-gradient-to-r from-orange-500 to-yellow-400 text-black font-bold px-8 py-3 rounded-xl text-xl hover:opacity-90 transition-all"
+            >
+              Sign up now
+            </button>
+          )}
         </div>
 
         {/* 🔍 Trending + Search bar */}
