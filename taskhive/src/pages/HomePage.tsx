@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; 
 import BGImage from "../assets/BGhome.jpg";
 import homeimg1 from "../assets/homeimg.jpg";
 import homeimg2 from "../assets/homeimg2.jpg";
@@ -9,6 +9,12 @@ import homeimg6 from "../assets/homeimg6.jpg";
 import homeimg7 from "../assets/homeimg7.jpg";
 
 export default function HomePage() {
+  const navigate = useNavigate(); 
+
+  const handleSignUpClick = () => {
+    navigate("/register");
+  };
+
   return (
     <div className=" bg-white">
       <section
@@ -26,7 +32,10 @@ export default function HomePage() {
             business needs. From design to development, find the right talent in
             minutes.
           </p>
-          <button className="bg-gradient-to-r from-orange-500 to-yellow-400 text-black font-bold px-8 py-3 rounded-xl text-xl">
+          <button
+            onClick={handleSignUpClick}
+            className="bg-gradient-to-r from-orange-500 to-yellow-400 text-black font-bold px-8 py-3 rounded-xl text-xl"
+          >
             Sign up now
           </button>
         </div>
@@ -52,7 +61,7 @@ export default function HomePage() {
             <li>✓ Connect with employers quickly and efficiently</li>
             <li>✓ Simple and seamless application process</li>
           </ul>
-          <button className="mt-4 bg-gradient-to-r from-orange-500 to-yellow-400 text-black font-bold px-6 py-3 rounded-xl">
+          <button onClick={handleSignUpClick} className="mt-4 bg-gradient-to-r from-orange-500 to-yellow-400 text-black font-bold px-6 py-3 rounded-xl">
             Get Started
           </button>
         </div>

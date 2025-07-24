@@ -29,6 +29,8 @@ import ClientContractPage from "../pages/ClientContractPage.tsx";
 import ClientContractDetailPage from "../pages/ClientContractDetailPage.tsx";
 import FreelancerMyProposalsPage from "../pages/FreelancerMyProposalsPage.tsx";
 import FreelancerMyContractPage from "../pages/FreelancerMyContractPage.tsx";
+import NotFoundPage from "../pages/NotFoundPage";
+import ProtectedRoute from "../components/ProtectedRoute"; // Thêm import
 
 export default function AppRouter() {
   return (
@@ -37,11 +39,14 @@ export default function AppRouter() {
         <Route
           path="/"
           element={
-            <MainLayout>
-              <HomePage />
-            </MainLayout>
+            <ProtectedRoute requireAuth={false}>
+              <MainLayout>
+                <HomePage />
+              </MainLayout>
+            </ProtectedRoute>
           }
         />
+
         <Route
           path="/hirefreelancer"
           element={
@@ -114,14 +119,6 @@ export default function AppRouter() {
           element={
             <MainLayout>
               <CreateJobPost />
-            </MainLayout>
-          }
-        />
-        <Route
-          path="/find-work"
-          element={
-            <MainLayout>
-              <FindWorkPage />
             </MainLayout>
           }
         />
@@ -224,6 +221,15 @@ export default function AppRouter() {
           element={
             <MainLayout>
               <FreelancerMyContractPage />
+            </MainLayout>
+          }
+        />
+
+        <Route
+          path="*"
+          element={
+            <MainLayout>
+              <NotFoundPage />
             </MainLayout>
           }
         />
