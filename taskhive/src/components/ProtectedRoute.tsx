@@ -42,7 +42,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       }
 
       userRole = decodedToken.role;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       // Invalid token, clear storage
       localStorage.removeItem("jwtToken");
@@ -66,7 +66,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       case "Client":
         return <Navigate to="/hirefreelancer" replace />;
       case "Admin":
-        return <Navigate to="/admin" replace />;
+        return <Navigate to="/admin/transactions" replace />;
       default:
         return <Navigate to="/find-work" replace />;
     }
@@ -89,7 +89,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       case "Client":
         return <Navigate to="/hirefreelancer" replace />;
       case "Admin":
-        return <Navigate to="/admin" replace />;
+        return <Navigate to="/admin/transactions" replace />;
       default:
         return <Navigate to="/login" replace />;
     }

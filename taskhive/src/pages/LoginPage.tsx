@@ -6,6 +6,7 @@ import api from "../services/api";
 import axios from "axios";
 import Toast from "../components/Toast";
 import GoogleLoginButton from "../components/GoogleLoginButton";
+import { refreshAuth } from "../contexts/AuthContext";
 
 interface ToastState {
   message: string;
@@ -56,7 +57,7 @@ export default function LoginPage() {
             navigate("/hirefreelancer");
             break;
           case "Admin":
-            navigate("/admin");
+            navigate("/admin/transactions");
             break;
           default:
             navigate("/");
@@ -118,10 +119,10 @@ export default function LoginPage() {
       localStorage.setItem("refreshToken", refreshToken);
       localStorage.setItem("tokenExpiresAt", expiresAt);
 
+      refreshAuth();
+
       showToast(message || "Login successful! Redirecting...", "success");
-      setTimeout(() => {
-        handleRoleBasedRedirect();
-      }, 1500);
+      setTimeout(() => handleRoleBasedRedirect(), 1500);
     } catch (err: unknown) {
       if (axios.isAxiosError(err) && err.response) {
         const apiMessage = (err.response.data as { message?: string }).message;
@@ -156,7 +157,7 @@ export default function LoginPage() {
       localStorage.setItem("jwtToken", accessToken);
       localStorage.setItem("refreshToken", refreshToken);
       localStorage.setItem("tokenExpiresAt", expiresAt);
-
+      refreshAuth();
       showToast(
         message || "Google login successful! Redirecting...",
         "success"

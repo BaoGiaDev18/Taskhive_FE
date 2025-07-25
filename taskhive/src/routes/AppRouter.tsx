@@ -31,6 +31,8 @@ import FreelancerMyProposalsPage from "../pages/FreelancerMyProposalsPage.tsx";
 import FreelancerMyContractPage from "../pages/FreelancerMyContractPage.tsx";
 import NotFoundPage from "../pages/NotFoundPage";
 import ProtectedRoute from "../components/ProtectedRoute"; // Thêm import
+import AdminLayout from "../layouts/AdminLayout.tsx";
+import TransactionPage from "../pages/Admin/TransactionPage.tsx";
 
 export default function AppRouter() {
   return (
@@ -231,6 +233,17 @@ export default function AppRouter() {
             <MainLayout>
               <NotFoundPage />
             </MainLayout>
+          }
+        />
+
+        <Route
+          path="/admin/transactions"
+          element={
+            <ProtectedRoute allowedRoles={["Admin"]}>
+              <AdminLayout>
+                <TransactionPage />
+              </AdminLayout>
+            </ProtectedRoute>
           }
         />
       </Routes>
