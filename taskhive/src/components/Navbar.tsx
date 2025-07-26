@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 import Logoforblack from "../assets/Logo gốc trên nền đen.png";
 import api from "../services/api";
-
+import PlatformFeedbackPopup from "../pages/PlatformFeedbackPopup";
 interface UserProfile {
   fullName: string;
   imageUrl?: string;
@@ -16,6 +16,7 @@ export default function Navbar() {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const [showFeedbackPopup, setShowFeedbackPopup] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("jwtToken");
@@ -415,6 +416,12 @@ export default function Navbar() {
                                 </svg>
                                 My Contracts
                               </Link>
+                              <button
+                                onClick={() => setShowFeedbackPopup(true)}
+                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left bg-white"
+                              >
+                                📝 Give Feedback
+                              </button>
                             </>
                           )}
 
@@ -502,6 +509,12 @@ export default function Navbar() {
                                 </svg>
                                 Slot Plan
                               </Link>
+                              <button
+                                onClick={() => setShowFeedbackPopup(true)}
+                                className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 w-full text-left bg-white"
+                              >
+                                📝 Give Feedback
+                              </button>
                             </>
                           )}
                         </div>
@@ -881,6 +894,13 @@ export default function Navbar() {
           }
         })()}
       </div>
+      <PlatformFeedbackPopup
+        isOpen={showFeedbackPopup}
+        onClose={() => setShowFeedbackPopup(false)}
+        onSuccess={() => {
+          alert("Thank you for your feedback!");
+        }}
+      />
     </>
   );
 }
