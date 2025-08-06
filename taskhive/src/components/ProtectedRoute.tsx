@@ -66,7 +66,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       case "Client":
         return <Navigate to="/hirefreelancer" replace />;
       case "Admin":
-        return <Navigate to="/admin/transactions" replace />;
+        return <Navigate to="/admin/dashboard" replace />;
       default:
         return <Navigate to="/find-work" replace />;
     }
@@ -89,7 +89,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
       case "Client":
         return <Navigate to="/hirefreelancer" replace />;
       case "Admin":
-        return <Navigate to="/admin/transactions" replace />;
+        return <Navigate to="/admin/dashboard" replace />;
       default:
         return <Navigate to="/login" replace />;
     }

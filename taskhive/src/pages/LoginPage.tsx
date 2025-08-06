@@ -57,7 +57,7 @@ export default function LoginPage() {
             navigate("/hirefreelancer");
             break;
           case "Admin":
-            navigate("/admin/transactions");
+            navigate("/admin/dashboard");
             break;
           default:
             navigate("/");

@@ -33,6 +33,9 @@ import NotFoundPage from "../pages/NotFoundPage";
 import ProtectedRoute from "../components/ProtectedRoute"; // Thêm import
 import AdminLayout from "../layouts/AdminLayout.tsx";
 import TransactionPage from "../pages/Admin/TransactionPage.tsx";
+import ManageUserPage from "../pages/Admin/ManageUserPage.tsx";
+import FeedbackPage from "../pages/Admin/FeedbackPage.tsx";
+import DashboardPage from "../pages/Admin/DashboardPage.tsx";
 
 export default function AppRouter() {
   return (
@@ -242,6 +245,36 @@ export default function AppRouter() {
             <ProtectedRoute allowedRoles={["Admin"]}>
               <AdminLayout>
                 <TransactionPage />
+              </AdminLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/users"
+          element={
+            <ProtectedRoute allowedRoles={["Admin"]}>
+              <AdminLayout>
+                <ManageUserPage />
+              </AdminLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/feedbacks"
+          element={
+            <ProtectedRoute allowedRoles={["Admin"]}>
+              <AdminLayout>
+                <FeedbackPage />
+              </AdminLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin/dashboard"
+          element={
+            <ProtectedRoute allowedRoles={["Admin"]}>
+              <AdminLayout>
+                <DashboardPage />
               </AdminLayout>
             </ProtectedRoute>
           }
