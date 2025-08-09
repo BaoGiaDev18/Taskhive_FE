@@ -83,17 +83,6 @@ export default function HomePage() {
   // ✅ Get current reviews to display
   const currentReviews = getCurrentPageReviews();
 
-  // Generate masked name
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const getMaskedName = (fullName: string) => {
-    const randomChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    const firstChar =
-      randomChars[Math.floor(Math.random() * randomChars.length)];
-    const secondChar =
-      randomChars[Math.floor(Math.random() * randomChars.length)];
-    return `${firstChar}${secondChar}************`;
-  };
-
   // Render stars
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, index) => (
@@ -332,12 +321,10 @@ export default function HomePage() {
                       {/* Header */}
                       <div className="flex items-center justify-between mb-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-yellow-400 rounded-full flex items-center justify-center text-white font-bold text-lg">
-                            {getMaskedName(review.reviewer.fullName).charAt(0)}
-                          </div>
+                          <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-yellow-400 rounded-full flex items-center justify-center"></div>
                           <div>
                             <h4 className="font-semibold text-gray-900 text-sm">
-                              {getMaskedName(review.reviewer.fullName)}
+                              {review.reviewer.fullName}
                             </h4>
                             <p className="text-xs text-gray-500">
                               {formatDate(review.createdAt)}
@@ -470,5 +457,3 @@ export default function HomePage() {
     </div>
   );
 }
-
-
