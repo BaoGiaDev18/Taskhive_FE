@@ -115,6 +115,12 @@ export default function Navbar() {
             >
               Blogs
             </Link>
+            <Link
+              to="/messages"
+              className="text-white hover:text-yellow-400 transition-colors"
+            >
+              Messages
+            </Link>
           </div>
         );
       } else if (user.role === "Client") {
@@ -137,6 +143,12 @@ export default function Navbar() {
               className="text-white hover:text-yellow-400 transition-colors"
             >
               Blogs
+            </Link>
+            <Link
+              to="/messages"
+              className="text-white hover:text-yellow-400 transition-colors"
+            >
+              Messages
             </Link>
           </div>
         );
@@ -202,6 +214,13 @@ export default function Navbar() {
             >
               Blogs
             </Link>
+            <Link
+              to="/messages"
+              className="block px-6 py-4 text-white hover:bg-gray-800 transition-colors border-b border-gray-700"
+              onClick={handleMobileLinkClick}
+            >
+              Messages
+            </Link>
           </>
         );
       } else if (user.role === "Client") {
@@ -227,6 +246,13 @@ export default function Navbar() {
               onClick={handleMobileLinkClick}
             >
               Blogs
+            </Link>
+            <Link
+              to="/messages"
+              className="block px-6 py-4 text-white hover:bg-gray-800 transition-colors border-b border-gray-700"
+              onClick={handleMobileLinkClick}
+            >
+              Messages
             </Link>
           </>
         );

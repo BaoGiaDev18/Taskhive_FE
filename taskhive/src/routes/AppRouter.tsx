@@ -36,6 +36,7 @@ import TransactionPage from "../pages/Admin/TransactionPage.tsx";
 import ManageUserPage from "../pages/Admin/ManageUserPage.tsx";
 import FeedbackPage from "../pages/Admin/FeedbackPage.tsx";
 import DashboardPage from "../pages/Admin/DashboardPage.tsx";
+import MessagesPage from "../pages/MessagesPage.tsx";
 
 export default function AppRouter() {
   return (
@@ -277,6 +278,14 @@ export default function AppRouter() {
                 <DashboardPage />
               </AdminLayout>
             </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/messages"
+          element={
+            <MainLayout>
+              <MessagesPage />
+            </MainLayout>
           }
         />
       </Routes>

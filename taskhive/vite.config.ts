@@ -5,15 +5,16 @@ import react from "@vitejs/plugin-react-swc";
 export default defineConfig({
   plugins: [react()],
   server: {
-    // https: true,
     proxy: {
       "/api": {
-        target: "https://taskhive-zjch.onrender.com",
+        // target: "https://taskhive-zjch.onrender.com",
+        target: "https://localhost:7062",
         changeOrigin: true,
         secure: false,
       },
       "/hubs": {
-        target: "https://taskhive-zjch.onrender.com",
+        // target: "https://taskhive-zjch.onrender.com",
+        target: "https://localhost:7062",
         ws: true,
         changeOrigin: true,
         secure: false,
