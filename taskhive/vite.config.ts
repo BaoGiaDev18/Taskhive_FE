@@ -7,14 +7,14 @@ export default defineConfig({
   server: {
     proxy: {
       "/api": {
-        // target: "https://taskhive-zjch.onrender.com",
-        target: "https://localhost:7062",
+        target: "https://taskhive-zjch.onrender.com",
+        // target: "https://localhost:7062",
         changeOrigin: true,
         secure: false,
       },
       "/hubs": {
-        // target: "https://taskhive-zjch.onrender.com",
-        target: "https://localhost:7062",
+        target: "https://taskhive-zjch.onrender.com",
+        // target: "https://localhost:7062",
         ws: true,
         changeOrigin: true,
         secure: false,
