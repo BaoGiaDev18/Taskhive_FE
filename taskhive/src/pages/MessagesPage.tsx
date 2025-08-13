@@ -497,11 +497,11 @@ export default function MessagesPage() {
       return;
     }
 
-    // Dev dùng proxy, Prod dùng env
-    const hubBase = import.meta.env.DEV
-      ? ""
-      : import.meta.env.VITE_API_BASE_URL || "";
-    const hubUrl = `${hubBase}/hubs/chat?conversationId=${selectedId}`;
+    // Xóa dấu "/" ở cuối nếu có, hoặc fallback "/api" khi không set env
+    const API_BASE =
+      import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") || "/api";
+
+    const hubUrl = `${API_BASE}/hubs/chat?conversationId=${selectedId}`;
 
     let disposed = false;
 
