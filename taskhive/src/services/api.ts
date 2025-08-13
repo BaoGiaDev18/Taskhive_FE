@@ -1,16 +1,15 @@
-// src/services/api.ts
 import axios from "axios";
 
-// Host gốc của BE (không có /api ở cuối)
+// Host gốc của BE (KHÔNG có /api ở cuối)
 const API_HOST = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "");
 
-// REST base: prod dùng `${API_HOST}/api`, dev dùng proxy "/api"
-export const REST_BASE = API_HOST ? `${API_HOST}/api` : "/api";
-// Hub base: luôn là host gốc (KHÔNG có /api)
-export const HUB_BASE = API_HOST || ""; // dev để rỗng -> đi qua proxy "/hubs"
+// Hub base: luôn là host gốc (prod = https://taskhive-zjch.onrender.com, dev = "")
+export const HUB_BASE = API_HOST || "";
 
+// Axios cho REST: baseURL = host gốc (KHÔNG /api)
+// -> Mọi nơi trong code cứ gọi "/api/..." như trước là chạy cả dev (proxy) lẫn prod.
 const api = axios.create({
-  baseURL: REST_BASE,
+  baseURL: API_HOST || "", // dev để "", đi qua proxy Vite; prod = domain BE
   timeout: 10000,
 });
 

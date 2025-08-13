@@ -89,13 +89,13 @@ async function apiGetConversations(
   userId: number,
   role: "freelancer" | "client"
 ) {
-  const res = await api.get(`/Conversation/${role}/${userId}`, {
+  const res = await api.get(`/api/Conversation/${role}/${userId}`, {
     headers: { Accept: "application/json" },
   });
   return parseMaybe(res.data) as ApiConversationListItemDto[];
 }
 async function apiGetMessages(conversationId: number) {
-  const res = await api.get(`/Message/${conversationId}`, {
+  const res = await api.get(`/api/Message/${conversationId}`, {
     headers: { Accept: "application/json" },
   });
   return parseMaybe(res.data) as ApiMessageDto[];
@@ -115,7 +115,7 @@ async function apiCreateMessage(
     fileURL: payload.fileURL ?? null,
     messageType: payload.messageType ?? "Text",
   };
-  const res = await api.post(`/Message/${conversationId}`, body, {
+  const res = await api.post(`/api/Message/${conversationId}`, body, {
     headers: { "Content-Type": "application/json", Accept: "application/json" },
   });
   return parseMaybe(res.data) as ApiMessageDto;
@@ -426,7 +426,7 @@ export default function MessagesPage() {
     let on = true;
     (async () => {
       try {
-        const r = await api.get("/User/me");
+        const r = await api.get("/api/User/me");
         if (!on) return;
         setMeUser(meOf(r.data?.fullName, r.data?.imageUrl));
       } catch {
