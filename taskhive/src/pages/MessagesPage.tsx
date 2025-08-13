@@ -216,7 +216,7 @@ function Sidebar({
           </svg>
         </div>
       </div>
-      <div className="overflow-y-auto h-[calc(100vh-160px)]">
+      <div className="flex-1 overflow-y-auto">
         {filtered.map((c) => (
           <button
             key={c.id}
@@ -644,16 +644,18 @@ export default function MessagesPage() {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="mx-auto max-w-[1400px]">
-        <div className="flex h-screen">
+    <div className="h-full bg-gray-50">
+      {/* full-width, bỏ max-w & mx-auto */}
+      <div className="w-full h-full">
+        {/* flex full-height; chỉ vùng giữa mới scroll */}
+        <div className="flex h-full overflow-hidden">
           <Sidebar
             items={conversations}
             selectedId={selectedId}
             onSelect={setSelectedId}
           />
 
-          <div className="flex-1 flex flex-col bg-gray-50 relative">
+          <div className="flex-1 min-w-0 flex flex-col bg-gray-50 relative pt-1">
             <ChatHeader
               title={
                 selected?.title ??

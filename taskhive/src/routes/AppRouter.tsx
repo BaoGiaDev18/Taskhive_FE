@@ -37,6 +37,7 @@ import ManageUserPage from "../pages/Admin/ManageUserPage.tsx";
 import FeedbackPage from "../pages/Admin/FeedbackPage.tsx";
 import DashboardPage from "../pages/Admin/DashboardPage.tsx";
 import MessagesPage from "../pages/MessagesPage.tsx";
+import ChatLayout from "../layouts/ChatLayout.tsx";
 
 export default function AppRouter() {
   return (
@@ -283,9 +284,9 @@ export default function AppRouter() {
         <Route
           path="/messages"
           element={
-            <MainLayout>
+            <ChatLayout>
               <MessagesPage />
-            </MainLayout>
+            </ChatLayout>
           }
         />
       </Routes>
