@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useEffect, useMemo, useRef, useState } from "react";
 import * as signalR from "@microsoft/signalr";
-import api from "../services/api";
 import { useAuth } from "../contexts/AuthContext";
+import api, { HUB_BASE } from "../services/api";
 
 /** ===== UI types ===== */
 interface UserMeta {
@@ -89,13 +89,13 @@ async function apiGetConversations(
   userId: number,
   role: "freelancer" | "client"
 ) {
-  const res = await api.get(`/api/Conversation/${role}/${userId}`, {
+  const res = await api.get(`/Conversation/${role}/${userId}`, {
     headers: { Accept: "application/json" },
   });
   return parseMaybe(res.data) as ApiConversationListItemDto[];
 }
 async function apiGetMessages(conversationId: number) {
-  const res = await api.get(`/api/Message/${conversationId}`, {
+  const res = await api.get(`/Message/${conversationId}`, {
     headers: { Accept: "application/json" },
   });
   return parseMaybe(res.data) as ApiMessageDto[];
@@ -115,7 +115,7 @@ async function apiCreateMessage(
     fileURL: payload.fileURL ?? null,
     messageType: payload.messageType ?? "Text",
   };
-  const res = await api.post(`/api/Message/${conversationId}`, body, {
+  const res = await api.post(`/Message/${conversationId}`, body, {
     headers: { "Content-Type": "application/json", Accept: "application/json" },
   });
   return parseMaybe(res.data) as ApiMessageDto;
@@ -426,7 +426,7 @@ export default function MessagesPage() {
     let on = true;
     (async () => {
       try {
-        const r = await api.get("/api/User/me");
+        const r = await api.get("/User/me");
         if (!on) return;
         setMeUser(meOf(r.data?.fullName, r.data?.imageUrl));
       } catch {
@@ -498,10 +498,8 @@ export default function MessagesPage() {
     }
 
     // Xóa dấu "/" ở cuối nếu có, hoặc fallback "/api" khi không set env
-    const API_BASE =
-      import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") || "/api";
 
-    const hubUrl = `${API_BASE}/hubs/chat?conversationId=${selectedId}`;
+    const hubUrl = `${HUB_BASE}/hubs/chat?conversationId=${selectedId}`;
 
     let disposed = false;
 

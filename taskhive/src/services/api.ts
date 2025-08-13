@@ -1,19 +1,23 @@
 // src/services/api.ts
 import axios from "axios";
 
+// Host gốc của BE (không có /api ở cuối)
+const API_HOST = (import.meta.env.VITE_API_BASE_URL || "").replace(/\/$/, "");
+
+// REST base: prod dùng `${API_HOST}/api`, dev dùng proxy "/api"
+export const REST_BASE = API_HOST ? `${API_HOST}/api` : "/api";
+// Hub base: luôn là host gốc (KHÔNG có /api)
+export const HUB_BASE = API_HOST || ""; // dev để rỗng -> đi qua proxy "/hubs"
+
 const api = axios.create({
-  baseURL: "https://taskhive-zjch.onrender.com", // <-- đổi cho đúng với backend
-  // baseURL: "https://localhost:7062",
-  // baseURL: "",
-  timeout: 5000,
+  baseURL: REST_BASE,
+  timeout: 10000,
 });
 
-// (Tuỳ chọn) Thêm interceptor để tự động đính token vào header nếu có:
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("jwtToken");
   if (token && config.headers) {
-    // Cách đơn giản nhất: chỉ cần gán thêm key Authorization
-    config.headers["Authorization"] = `Bearer ${token}`;
+    config.headers.Authorization = `Bearer ${token}`;
   }
   return config;
 });
