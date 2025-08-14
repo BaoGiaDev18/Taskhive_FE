@@ -260,29 +260,7 @@ function ChatHeader({ title }: { title: string }) {
   return (
     <div className="h-16 border-b border-gray-200 flex items-center justify-between px-6">
       <div className="font-medium">{title}</div>
-      <div className="flex items-center gap-3 text-gray-400">
-        <button className="p-2 rounded-full hover:bg-gray-100" title="Call">
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth="2"
-              d="M15 10l4.553-2.276A2 2 0 0122 9.528V14.5a2 2 0 01-1.105 1.789L15 19M15 10V5.5A2.5 2.5 0 0012.5 3h-1A2.5 2.5 0 009 5.5V10m6 0L9 13m0 0v5.5A2.5 2.5 0 0011.5 21h1a2.5 2.5 0 002.5-2.5V13"
-            />
-          </svg>
-        </button>
-        <button
-          className="p-2 rounded-full hover:bg-gray-100"
-          title="Translate"
-        >
-          <span className="font-semibold">Ä</span>
-        </button>
-      </div>
+      <div className="flex items-center gap-3 text-gray-400"></div>
     </div>
   );
 }

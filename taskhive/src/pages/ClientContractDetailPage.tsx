@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import api from "../services/api";
 
 interface Application {
@@ -107,6 +107,8 @@ const ClientContractDetailPage = () => {
     comment: "",
   });
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const navigate = useNavigate();
+  const [isStartingChat, setIsStartingChat] = useState(false);
 
   // Toast notification state
   const [toast, setToast] = useState<{
@@ -225,11 +227,158 @@ const ClientContractDetailPage = () => {
     }
   };
 
+  // --- JWT helpers ---
+  const decodeJWT = (token: string) => {
+    try {
+      const base64Url = token.split(".")[1];
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split("")
+          .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
+          .join("")
+      );
+      return JSON.parse(jsonPayload);
+    } catch (e) {
+      console.error("decodeJWT error:", e);
+      return null;
+    }
+  };
+
+  const getUserIdFromToken = (): number | null => {
+    const token = localStorage.getItem("jwtToken");
+    if (!token) return null;
+    const decoded = decodeJWT(token);
+    if (!decoded) return null;
+    const now = Date.now() / 1000;
+    if (decoded.exp && decoded.exp < now) {
+      localStorage.removeItem("jwtToken");
+      return null;
+    }
+    const uid = decoded.sub || decoded.userId || decoded.id;
+    return uid ? parseInt(uid) : null;
+  };
+
+  // --- Tìm conversation 1-1 giữa freelancer & client ---
+  // Dùng endpoint /api/Conversation/freelancer/{freelancerId}
+  const findExistingConversation = async (
+    freelancerId: number,
+    clientId: number
+  ): Promise<number | null> => {
+    try {
+      const res = await api.get(
+        `/api/Conversation/freelancer/${freelancerId}`,
+        {
+          validateStatus: () => true,
+        }
+      );
+      if (res.status >= 200 && res.status < 300 && Array.isArray(res.data)) {
+        const hit = res.data.find((c: any) => c?.partnerId === clientId);
+        if (hit?.conversationId) return hit.conversationId;
+      }
+    } catch (e) {
+      console.debug("findExistingConversation skipped", e);
+    }
+    return null;
+  };
+
+  // --- Bóc conversationId từ response POST /api/Conversation ---
+  const extractConversationId = (res: any): string | number | null => {
+    try {
+      let body = res?.data;
+
+      if (typeof body === "string") {
+        const t = body.trim();
+        if (t.startsWith("{") || t.startsWith("[")) {
+          try {
+            body = JSON.parse(t);
+          } catch {
+            /* ignore */
+          }
+        } else {
+          const n = parseInt(t, 10);
+          if (!Number.isNaN(n)) return n;
+          const tail = t.match(/(\d+)\s*$/);
+          if (tail?.[1]) return tail[1];
+        }
+      }
+      if (typeof body === "object" && body) {
+        if (body.conversationId != null) return body.conversationId;
+        if (body.id != null) return body.id;
+      }
+
+      const loc = res?.headers?.location || res?.headers?.Location;
+      if (typeof loc === "string" && loc) {
+        const last = loc.split("/").filter(Boolean).pop();
+        if (last) {
+          const n = parseInt(last, 10);
+          return Number.isNaN(n) ? last : n;
+        }
+      }
+    } catch (e) {
+      console.error("extractConversationId error:", e);
+    }
+    return null;
+  };
+
   useEffect(() => {
     if (applicationId) {
       fetchApplicationDetails();
     }
   }, [applicationId]);
+
+  // --- Send Message ---
+  const handleSendMessage = async () => {
+    if (!application) return;
+
+    const freelancerId = application.freelancerId;
+    const clientId = getUserIdFromToken(); // người đang đăng nhập (client)
+    if (!clientId) {
+      showToast("Vui lòng đăng nhập lại.", "error");
+      return;
+    }
+
+    try {
+      setIsStartingChat(true);
+
+      // 0) Đã có conv chưa?
+      const existed = await findExistingConversation(freelancerId, clientId);
+      if (existed) {
+        showToast("Bạn đã có cuộc trò chuyện với freelancer này.", "success");
+        navigate(`/messages`);
+        return;
+      }
+
+      // 1) Tạo conversation mới: creator là client
+      const createRes = await api.post(
+        "/api/Conversation",
+        { type: "OneToOne", createdBy: clientId },
+        { headers: { "Content-Type": "application/json" } } // để axios tự parse JSON
+      );
+
+      const conversationId = extractConversationId(createRes);
+      if (!conversationId) {
+        showToast("Không lấy được ConversationId.", "error");
+        return;
+      }
+
+      // 2) Thêm freelancer vào cuộc trò chuyện
+      await api.post(
+        `/api/Conversation/${conversationId}/members/${freelancerId}`
+      );
+
+      showToast("Đã mở cuộc trò chuyện.", "success");
+      navigate(`/messages`);
+    } catch (err: any) {
+      const msg =
+        err?.response?.data?.message ||
+        err?.response?.data ||
+        "Không thể gửi tin nhắn";
+      showToast(msg, "error");
+    } finally {
+      setIsStartingChat(false);
+    }
+  };
 
   // Helper functions
   const formatSalary = (amount: number) => {
@@ -681,7 +830,11 @@ const ClientContractDetailPage = () => {
               </h3>
 
               <div className="space-y-3">
-                <button className="w-full bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-lg font-medium transition-colors flex items-center justify-center gap-2">
+                <button
+                  onClick={handleSendMessage}
+                  disabled={isStartingChat}
+                  className="w-full bg-blue-500 hover:bg-blue-600 disabled:opacity-50 text-white py-2 px-4 rounded-lg font-medium transition-colors flex items-center justify-center gap-2"
+                >
                   <svg
                     className="w-4 h-4"
                     fill="none"
@@ -695,7 +848,7 @@ const ClientContractDetailPage = () => {
                       d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
                     />
                   </svg>
-                  Send Message
+                  {isStartingChat ? "Opening..." : "Send Message"}
                 </button>
 
                 <Link
